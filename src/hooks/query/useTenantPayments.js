@@ -5,18 +5,21 @@ import {
 } from "../../service/firestoreService";
 
 const QueryId = "paymentList";
-export const usePaymentsQuery = (roomId) => {
+export const useTenantPaymentsQuery = (roomId) => {
   return useQuery([QueryId, roomId], {
     queryFn: async () => {
       const roomSnapshot = await getRoomById(roomId);
       const paymentsSnapshot = await getPaymentByTenantId(
-        roomSnapshot.data().tenantId
+        roomSnapshot.data().tenantId.id
       );
+      console.log(paymentsSnapshot);
 
-      const paymentList = paymentsSnapshot.map((payment) => {
+      const paymentList = paymentsSnapshot.docs.map((payment) => {
         return {
           id: payment.id,
-          ...payment.data()
+          ...payment.data(),
+          tenantId: roomSnapshot.data().tenantId.id,
+          tenant: roomSnapshot.data().tenant
         };
       });
       return paymentList;

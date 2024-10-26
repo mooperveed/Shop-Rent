@@ -1,11 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import RoomListPage from "./components/page/roomListPage";
+import { RoomDetailPage } from "./components/page/roomDetailPage";
+import { Routes, Route } from "react-router-dom";
+import { createTheme, ThemeProvider } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "react-query";
 
+const theme = createTheme({});
+const queryClient = new QueryClient();
 function App() {
   return (
-    <div>
-      Rent App
-    </div>
+    <ThemeProvider theme={theme}>
+      <QueryClientProvider client={queryClient}>
+        <Routes>
+          <Route path="/" element={<RoomListPage />} />
+          <Route path="/room/:roomId" element={<RoomDetailPage />} />
+        </Routes>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

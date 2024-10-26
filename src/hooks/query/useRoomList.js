@@ -2,18 +2,21 @@ import { useQuery } from "react-query";
 import { getRooms, getTenantById } from "../../service/firestoreService";
 
 const QueryId = "roomList";
-export const useRoomsQuery = () => {
+export const useRoomListQuery = () => {
   return useQuery([QueryId], {
     queryFn: async () => {
       const roomsSnapshot = await getRooms();
 
       const roomsWithTenant = await Promise.all(
-        roomsSnapshot.map(async (roomDoc) => {
-          const tenantSnapshot = await getTenantById(roomDoc.data().tenantId);
+        roomsSnapshot.docs.map(async (roomDoc) => {
+          const tenantSnapshot = await getTenantById(
+            roomDoc.data().tenantId.id
+          );
 
           return {
             id: roomDoc.id,
             ...roomDoc.data(),
+            tenantId: tenantSnapshot.id,
             tenant: tenantSnapshot.data()
           };
         })

@@ -5,13 +5,14 @@ import {
   getDoc,
   query,
   where,
-  updateDoc
+  updateDoc,
+  getDocs
 } from "@firebase/firestore";
-import { db } from "../lib/db";
+import { db } from "../libs/db";
 import { COLLECTION } from "../constants/db";
 
 export const getRooms = () => {
-  return getDoc(collection(db, COLLECTION.ROOMS));
+  return getDocs(collection(db, COLLECTION.ROOMS));
 };
 
 export const getRoomById = (id) => {
@@ -23,8 +24,8 @@ export const getTenantById = (id) => {
 };
 
 export const getPaymentByTenantId = (id) => {
-  return getDoc(
-    query(collection(db, COLLECTION.ROOMS), where("tenantId", "==", id))
+  return getDocs(
+    query(collection(db, COLLECTION.PAYMENTS), where("tenantId", "==", id))
   );
 };
 
