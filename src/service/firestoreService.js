@@ -6,7 +6,7 @@ import {
   query,
   where,
   updateDoc,
-  getDocs
+  getDocs,
 } from "@firebase/firestore";
 import { db } from "../libs/db";
 import { COLLECTION } from "../constants/db";
@@ -24,19 +24,52 @@ export const getTenantById = (id) => {
 };
 
 export const getPaymentByTenantId = (id) => {
+  const tenant = doc(db, COLLECTION.TENANTS, id);
   return getDocs(
-    query(collection(db, COLLECTION.PAYMENTS), where("tenantId", "==", id))
+    query(collection(db, COLLECTION.PAYMENTS), where("tenantId", "==", tenant))
+  );
+};
+export const getPaymentByShopId = (id) => {
+  const room = doc(db, COLLECTION.SHOPS, id);
+  return getDocs(
+    query(collection(db, COLLECTION.PAYMENTS), where("shopId", "==", room))
   );
 };
 
 export const addNewPayment = (data) => {
-  return addDoc(collection(db, COLLECTION.PAYMENTS), data);
+  const shopRef = doc(db, COLLECTION.SHOPS, data.shopId);
+  return addDoc(collection(db, COLLECTION.PAYMENTS), {
+    ...data,
+    shopId: shopRef
+  });
 };
 
 export const createTenant = (data) => {
   return addDoc(collection(db, COLLECTION.TENANTS), data);
 };
 
-export const updateTenant = (id, tenantId) => {
-  return updateDoc(doc(db, COLLECTION.TENANTS, id), { tenantId });
+export const createRoom = (data) => {
+  return addDoc(collection(db, COLLECTION.ROOMS), data);
+};
+export const updateRoom = (id, data) => {
+  return updateDoc(doc(db, COLLECTION.ROOMS, id), data);
+};
+export const updateTenant = (id, data) => {
+  return updateDoc(doc(db, COLLECTION.TENANTS, id), data);
+};
+
+export const getShops = () => {
+  return getDocs(collection(db, COLLECTION.SHOPS));
+};
+
+export const getShopById = (id) => {
+  return getDoc(doc(db, COLLECTION.SHOPS, id));
+};
+
+export const createShop = (data) => {
+  return addDoc(collection(db, COLLECTION.SHOPS), data);
+};
+
+export const updateShop = (id, data) => {
+  return updateDoc(doc(db, COLLECTION.SHOPS, id), data);
 };

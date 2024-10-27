@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
+import { Chip, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const RoomCardWrapper = styled("div")(({ theme }) => ({
+const RoomCardWrapper = styled(Grid2)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   padding: "12px",
-  border: "1px solid rgba(0, 0, 0, 0.4)",
+  border: "1px solid #EAEAEA",
   borderRadius: "8px",
   cursor: "pointer",
+  gap: "12px",
   [theme.breakpoints.up("md")]: {
     padding: "16px"
   }
@@ -20,20 +22,19 @@ const RightColWrapper = styled("div")(({ theme }) => ({
 const LeftColWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: "8px"
+  gap: "8px",
+  maxWidth: "70%"
 }));
 const RoomTenantName = styled("div")(({ theme }) => ({
-  fontSize: "16px",
+  fontSize: "20px",
   fontWeight: 500,
-  color: "#000000",
   [theme.breakpoints.up("md")]: {
     fontSize: "20px"
   }
 }));
-const RoomRentAmount = styled("div")(({ theme }) => ({
-  fontSize: "16px",
-  fontWeight: 500,
-  color: "#000000",
+const RoomShopName = styled("div")(({ theme }) => ({
+  fontSize: "18px",
+  fontWeight: 400,
   [theme.breakpoints.up("md")]: {
     fontSize: "20px"
   }
@@ -41,20 +42,17 @@ const RoomRentAmount = styled("div")(({ theme }) => ({
 const RoomNumber = styled("div")(({ theme }) => ({
   fontSize: "24px",
   fontWeight: "bold",
-  color: "#000000",
+  textAlign: "center",
+  flex: 1,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   [theme.breakpoints.up("md")]: {
     fontSize: "32px"
   }
 }));
 
-const RoomStatus = styled("div")(({ theme }) => ({
-  fontSize: "16px",
-  fontWeight: 500,
-  color: "#000000",
-  [theme.breakpoints.up("md")]: {
-    fontSize: "20px"
-  }
-}));
+const RoomStatus = styled(Chip)(({ theme }) => ({}));
 
 export const RoomCard = (props) => {
   const navigate = useNavigate();
@@ -62,13 +60,13 @@ export const RoomCard = (props) => {
     navigate(`/room/${props.id}`);
   };
   return (
-    <RoomCardWrapper onClick={handleRoomCardClick}>
+    <RoomCardWrapper size={{ xs: 12, md: 4 }} onClick={handleRoomCardClick}>
       <LeftColWrapper>
         <RoomTenantName>{props.name}</RoomTenantName>
-        <RoomRentAmount>{props.price}</RoomRentAmount>
+        <RoomShopName>{props.address}</RoomShopName>
       </LeftColWrapper>
       <RightColWrapper>
-        <RoomStatus>{props.status}</RoomStatus>
+        <RoomStatus size="small" {...props.status} />
         <RoomNumber>{props.number}</RoomNumber>
       </RightColWrapper>
     </RoomCardWrapper>

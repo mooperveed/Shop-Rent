@@ -1,10 +1,14 @@
 import styled from "@emotion/styled";
+import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
+import { Grid2, IconButton } from "@mui/material";
+import SystemUpdateAltOutlinedIcon from "@mui/icons-material/SystemUpdateAltOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-const PaidItemWrapper = styled("div")(({ theme }) => ({
+const PaidItemWrapper = styled(Grid2)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   padding: "12px",
-  border: "1px solid rgba(0, 0, 0, 0.4)",
+  border: "1px solid #EAEAEA",
   borderRadius: "8px",
   cursor: "pointer",
   [theme.breakpoints.up("md")]: {
@@ -13,16 +17,15 @@ const PaidItemWrapper = styled("div")(({ theme }) => ({
 }));
 const PaidItemLeftCol = styled("div")(({ theme }) => ({
   display: "flex",
-  flexDirection: "column",
-  gap: "8px"
+  flexDirection: "column"
 }));
 const PaidAmount = styled("div")(({ theme }) => ({
-  fontSize: "16px",
+  fontSize: "24px",
   fontWeight: 500,
   color: "#000000"
 }));
 const PaidDate = styled("div")(({ theme }) => ({
-  fontSize: "16px",
+  fontSize: "12px",
   fontWeight: 500,
   color: "#000000"
 }));
@@ -43,15 +46,27 @@ const PaidPreviousBalance = styled("div")(({ theme }) => ({
 }));
 export const PaidItem = (props) => {
   return (
-    <PaidItemWrapper>
-      <PaidItemLeftCol>
-        <PaidAmount>{props.price}</PaidAmount>
-        <PaidDate>{props.date}</PaidDate>
-      </PaidItemLeftCol>
-      <PaidItemRightCol>
-        <PaidCurrentBalance>{props.currentBalance}</PaidCurrentBalance>
-        <PaidPreviousBalance>{props.previousBalance}</PaidPreviousBalance>
-      </PaidItemRightCol>
+    <PaidItemWrapper
+      size={{ xs: 12 }}
+      container
+      justifyContent={"space-between"}
+    >
+      <Grid2>
+        <PaidAmount>{props.amount}</PaidAmount>
+        <PaidDate>Paid on {formatTimestampToDate(props.createdAt)}</PaidDate>
+      </Grid2>
+      <Grid2 container spacing={1} alignItems={"center"}>
+        <Grid2>
+          <IconButton size={"small"} variant="contained">
+            <SystemUpdateAltOutlinedIcon />
+          </IconButton>
+        </Grid2>
+        <Grid2>
+          <IconButton size={"small"} variant="contained" color="error">
+            <DeleteIcon />
+          </IconButton>
+        </Grid2>
+      </Grid2>
     </PaidItemWrapper>
   );
 };

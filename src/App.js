@@ -4,7 +4,11 @@ import { Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-const theme = createTheme({});
+const theme = createTheme({
+  typography: {
+    fontFamily: "Poppins, sans-serif"
+  }
+});
 const queryClient = new QueryClient();
 function App() {
   return (
