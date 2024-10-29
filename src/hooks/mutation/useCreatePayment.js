@@ -14,7 +14,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
     mutationFn: async (data) => {
       const shopSnapshot = await getShopById(data.roomId);
       const currentBalance = shopSnapshot.data().currentBalance;
-      const updatedBalance = currentBalance + data.amount;
+      const updatedBalance = Number(currentBalance) + Number(data.amount);
       await updateShop(shopSnapshot.id, { currentBalance: updatedBalance });
       const paymentData = {
         amount: data.amount,
