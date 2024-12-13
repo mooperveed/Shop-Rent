@@ -1,15 +1,15 @@
 import { styled } from "@mui/system";
 import React, { useMemo, useState } from "react";
-import { RoomList } from "../atom/RoomList";
+import { ShopList } from "../atom/ShopList";
 import { Grid2, IconButton, TextField, Typography } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { RoomPageLayout } from "../atom/RoomPageLayout";
+import { ShopPageLayout } from "../atom/ShopPageLayout";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import { ModalLayout } from "../atom/ModalLayout";
-import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
+// import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
 import { Timestamp } from "@firebase/firestore";
 import { useShopListQuery } from "../../hooks/query/useShopList";
 import { useCreateShopMutation } from "../../hooks/mutation/useCreateShop";
@@ -18,56 +18,61 @@ import {
   getRentStatusColorAndText
 } from "../../utils/calculateRentStatus";
 
-const RoomPageWrapper = styled("div")(({ theme }) => ({
+const ShopPageWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: "24px"
 }));
-export default function RoomListPage(props) {
+
+export default function ShopListPage(props) {
   const [keyword, setKeyword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const roomListQuery = useShopListQuery();
+  const shopListQuery = useShopListQuery();
   const [shopField, setShopField] = useState({
     shopName: "",
     ownerName: "",
     roomNo: 0,
     roomRent: 0,
     ownerAddress: "",
-    startingBalance: 0,
     startDate: dayjs(new Date())
   });
-  const isLoading = roomListQuery.isLoading;
-  const rooms = useMemo(() => {
-    if (!roomListQuery.data) return [];
+  const isLoading = shopListQuery.isLoading;
+  const shops = useMemo(() => {
+    if (!shopListQuery.data) return [];
 
-    return roomListQuery.data
-      .filter((room) =>
-        room.shopName.toString().toLowerCase().includes(keyword.toLowerCase())
+    return shopListQuery.data
+      .filter((shop) =>
+        shop.shopName.toString().toLowerCase().includes(keyword.toLowerCase())
       )
-      .map((room) => ({
-        id: room.id,
-        name: room.shopName,
-        number: room.roomCount,
-        price: room.roomRent,
-        address: room.ownerAddress,
+      .map((shop) => ({
+        id: shop.id,
+        name: shop.shopName,
+        number: shop.roomCount,
+        price: shop.roomRent,
+        address: shop.ownerAddress,
         status: getRentStatusColorAndText(
           calculateRentStatus(
-            room.startDate,
-            room.roomRent,
-            room.startingBalance,
-            room.currentBalance
+            shop.startDate,
+            shop.roomRent,
+            
+            shop.currentBalance,
+            shop.taxRate,
+            shop.taxBalance,
           )
         )
-      }));
-  }, [roomListQuery.data, keyword]);
+      })
+    );
+  }, [shopListQuery.data, keyword]);
 
   const toggleCreateShopModal = () => {
     setIsModalOpen((prev) => !prev);
   };
+
   const handleCreateShopSuccess = () => {
-    roomListQuery.refetch();
+    shopListQuery.refetch();
     toggleCreateShopModal();
   };
+
   const handleCreateShop = () => {
     createShopMutation.mutate(
       {
@@ -77,15 +82,17 @@ export default function RoomListPage(props) {
       {}
     );
   };
+
   const createShopMutation = useCreateShopMutation(handleCreateShopSuccess);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShopField((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <RoomPageLayout>
-      <RoomPageWrapper>
+    <ShopPageLayout>
+      <ShopPageWrapper>
         <Grid2 container justifyContent={"space-between"} alignItems={"center"}>
           <Grid2 size="auto">
             <Typography variant="h6">Shop List</Typography>
@@ -102,13 +109,13 @@ export default function RoomListPage(props) {
         </Grid2>
         <TextField
           variant="outlined"
-          placeholder="Search room"
+          placeholder="Search shop"
           size="small"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
-        <RoomList rooms={rooms} isLoading={isLoading} />
-      </RoomPageWrapper>
+        <ShopList shops={shops} isLoading={isLoading} />
+      </ShopPageWrapper>
       <ModalLayout
         isOpen={isModalOpen}
         onClose={toggleCreateShopModal}
@@ -150,10 +157,10 @@ export default function RoomListPage(props) {
           </Grid2>
           <Grid2 size={{ xs: 6 }}>
             <TextField
-              label="Room Rent"
+              label="Shop Rent"
               variant="outlined"
               name="roomRent"
-              placeholder="Enter Room Rent"
+              placeholder="Enter Shop Rent"
               fullWidth
               value={shopField.roomRent}
               onChange={handleInputChange}
@@ -198,6 +205,6 @@ export default function RoomListPage(props) {
           </Grid2>
         </Grid2>
       </ModalLayout>
-    </RoomPageLayout>
+    </ShopPageLayout>
   );
 }

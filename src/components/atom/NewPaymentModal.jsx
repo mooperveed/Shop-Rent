@@ -5,7 +5,8 @@ import { useParams } from "react-router-dom";
 import { ModalLayout } from "./ModalLayout";
 
 export const NewPaymentModal = (props) => {
-  const { roomId } = useParams();
+  const { shopId } = useParams();
+  // console.log(shopId);
   const [amount, setAmount] = React.useState(0);
   const createPaymentMutation = useCreatePaymentMutation(props.onSuccess);
 
@@ -14,7 +15,7 @@ export const NewPaymentModal = (props) => {
   };
   const handleSubmitAmount = () => {
     createPaymentMutation.mutate({
-      roomId,
+      shopId,
       amount
     });
   };

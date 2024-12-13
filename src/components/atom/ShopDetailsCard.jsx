@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  useRoomDetailsQuery,
+  // useShopDetailsQuery,
   useShopDetailsQuery
 } from "../../hooks/query/useShopDetails";
 import styled from "@emotion/styled";
@@ -14,7 +14,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { useTenantPaymentsQuery } from "../../hooks/query/useTenantPayments";
+import { useShopPaymentsQuery } from "../../hooks/query/useShopPayments";
 import EditIcon from "@mui/icons-material/Edit";
 import { Label } from "@mui/icons-material";
 import { Timestamp } from "@firebase/firestore";
@@ -27,11 +27,11 @@ import {
 } from "../../utils/calculateRentStatus";
 import dayjs from "dayjs";
 
-const RoomDetailCardWrapper = styled(Grid2)(({ theme }) => ({
+const ShopDetailCardWrapper = styled(Grid2)(({ theme }) => ({
   padding: "16px 0px",
   borderBottom: "1.5px solid rgba(0, 0, 0, 0.2)"
 }));
-const RoomDetailCardLeftCol = styled("div")(({ theme }) => ({
+const ShopDetailCardLeftCol = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: "8px"
@@ -44,27 +44,42 @@ const LabeledFieldWrapper = styled("div")(({ theme }) => ({
 const FieldLabel = styled("div")(({ theme }) => ({
   fontSize: "12px"
 }));
-const RoomNumber = styled("div")(({ theme }) => ({
+const ShopName = styled("div")(({ theme }) => ({
   fontSize: "24px",
   fontWeight: 500,
   color: "#000000"
 }));
-const RoomConsumerNo = styled("div")(({ theme }) => ({
+// const ShopConsumerNo = styled("div")(({ theme }) => ({
+//   fontSize: "16px",
+//   fontWeight: 500,
+//   color: "#000000"
+// }));
+const ShopOwnerName = styled("div")(({ theme }) => ({
   fontSize: "16px",
   fontWeight: 500,
   color: "#000000"
 }));
-const RoomRentAmount = styled("div")(({ theme }) => ({
+const ShopAddress = styled("div")(({ theme }) => ({
   fontSize: "16px",
   fontWeight: 500,
   color: "#000000"
 }));
-const RoomStatus = styled("div")(({ theme }) => ({
+const RoomCount = styled("div")(({ theme }) => ({
   fontSize: "16px",
   fontWeight: 500,
   color: "#000000"
 }));
-const RoomDetailCardRightCol = styled("div")(({ theme }) => ({
+const ShopRentAmount = styled("div")(({ theme }) => ({
+  fontSize: "16px",
+  fontWeight: 500,
+  color: "#000000"
+}));
+const ShopStatus = styled("div")(({ theme }) => ({
+  fontSize: "16px",
+  fontWeight: 500,
+  color: "#000000"
+}));
+const ShopDetailCardRightCol = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: "4px",
@@ -81,8 +96,8 @@ const LabeledField = (props) => {
     </LabeledFieldWrapper>
   );
 };
-export const RoomDetailCard = (props) => {
-  const { roomId } = useParams();
+export const ShopDetailCard = (props) => {
+  const { shopId } = useParams();
   const [isOpen, setIsOpen] = React.useState(false);
   const [shopField, setShopField] = useState({
     id: "",
@@ -95,12 +110,12 @@ export const RoomDetailCard = (props) => {
     startDate: dayjs(new Date())
   });
   const toggleOpen = () => setIsOpen((prev) => !prev);
-  const roomDeatilsQuery = useShopDetailsQuery(roomId);
-  const paymentListQuery = useTenantPaymentsQuery(roomId);
+  const shopDeatilsQuery = useShopDetailsQuery(shopId);
+  const paymentListQuery = useShopPaymentsQuery(shopId);
   const updateShopMutation = useUpdateShopMutation();
 
-  const handleUpdateTenantSuccess = () => {
-    roomDeatilsQuery.refetch();
+  const handleUpdateShopSuccess = () => {
+    shopDeatilsQuery.refetch();
     paymentListQuery.refetch();
     toggleUpdateModal();
   };
@@ -113,36 +128,36 @@ export const RoomDetailCard = (props) => {
   };
   const handleUpdateShop = () => {
     updateShopMutation.mutate(shopField, {
-      onSuccess: handleUpdateTenantSuccess
+      onSuccess: handleUpdateShopSuccess
     });
   };
   useEffect(() => {
-    if (roomDeatilsQuery.data) {
+    if (shopDeatilsQuery.data) {
       setShopField((prev) => ({
         ...prev,
-        id: roomDeatilsQuery.data.id,
-        shopName: roomDeatilsQuery.data.shopName,
-        ownerName: roomDeatilsQuery.data.ownerName,
-        roomNo: roomDeatilsQuery.data.roomNo,
-        roomRent: roomDeatilsQuery.data.roomRent,
-        ownerAddress: roomDeatilsQuery.data.ownerAddress,
-        startingBalance: roomDeatilsQuery.data.startingBalance,
+        id: shopDeatilsQuery.data.id,
+        ShopName: shopDeatilsQuery.data.shopName,
+        ownerName: shopDeatilsQuery.data.ownerName,
+        roomNo: shopDeatilsQuery.data.roomNo,
+        shopRent: shopDeatilsQuery.data.roomRent,
+        ownerAddress: shopDeatilsQuery.data.ownerAddress,
+        startingBalance: shopDeatilsQuery.data.startingBalance,
         startDate: dayjs(
-          formatTimestampToDate(roomDeatilsQuery.data.startDate),
+          formatTimestampToDate(shopDeatilsQuery.data.startDate),
           "DD-MM-YYYY"
         )
       }));
     }
-  }, [roomDeatilsQuery.data]);
+  }, [shopDeatilsQuery.data]);
 
-  if (roomDeatilsQuery.isLoading) {
+  if (shopDeatilsQuery.isLoading) {
     return <div>Loading..</div>;
   }
-  if (roomDeatilsQuery.isError) {
-    return <div>Error {JSON.stringify(roomDeatilsQuery.error)}</div>;
+  if (shopDeatilsQuery.isError) {
+    return <div>Error {JSON.stringify(shopDeatilsQuery.error)}</div>;
   }
   return (
-    <RoomDetailCardWrapper container>
+    <ShopDetailCardWrapper container>
       <Grid2
         size={{ xs: 12 }}
         container
@@ -162,10 +177,11 @@ export const RoomDetailCard = (props) => {
             <Chip
               {...getRentStatusColorAndText(
                 calculateRentStatus(
-                  roomDeatilsQuery.data.startDate,
-                  roomDeatilsQuery.data.roomRent,
-                  roomDeatilsQuery.data.startingBalance,
-                  roomDeatilsQuery.data.currentBalance
+                  shopDeatilsQuery.data.startDate,
+                  shopDeatilsQuery.data.roomRent,
+                  shopDeatilsQuery.data.currentBalance,
+                  shopDeatilsQuery.data.taxRate,
+                  shopDeatilsQuery.data.taxBalance,
                 )
               )}
               size="small"
@@ -181,29 +197,43 @@ export const RoomDetailCard = (props) => {
       <Grid2 container size={{ xs: 12 }} rowGap={2}>
         <Grid2 size={{ xs: 6 }}>
           <LabeledField label={"Shop Name"}>
-            <RoomNumber>{roomDeatilsQuery.data.shopName}</RoomNumber>
+            <ShopName>{shopDeatilsQuery.data.shopName}</ShopName>
           </LabeledField>
         </Grid2>
         <Grid2 size={{ xs: 6 }}>
           <LabeledField label={"Room count"}>
-            <RoomRentAmount>{roomDeatilsQuery.data.roomNo}</RoomRentAmount>
+            <RoomCount>{shopDeatilsQuery.data.roomNo}</RoomCount>
           </LabeledField>
         </Grid2>
         <Grid2 size={{ xs: 6 }}>
           <LabeledField label={"Rent"}>
-            <RoomConsumerNo>{roomDeatilsQuery.data.roomRent}</RoomConsumerNo>
+            <ShopRentAmount>{shopDeatilsQuery.data.roomRent}</ShopRentAmount>      {/*{ //in firebase roomRent.I want to change to shopRent. for changing here}*/} 
           </LabeledField>
         </Grid2>
         <Grid2 size={{ xs: 6 }}>
           <LabeledField label={"Owner name"}>
-            <RoomConsumerNo>{roomDeatilsQuery.data.ownerName}</RoomConsumerNo>
+            <ShopOwnerName>{shopDeatilsQuery.data.ownerName}</ShopOwnerName>
           </LabeledField>
         </Grid2>
         <Grid2 size={{ xs: 6 }}>
           <LabeledField label={"Owner address"}>
-            <RoomConsumerNo>
-              {roomDeatilsQuery.data.ownerAddress}
-            </RoomConsumerNo>
+            <ShopAddress>
+              {shopDeatilsQuery.data.ownerAddress}
+            </ShopAddress>
+          </LabeledField>
+        </Grid2>
+        <Grid2 size={{ xs: 6 }}>
+          <LabeledField label={"Credit Amount"}>
+            <ShopAddress>
+              {shopDeatilsQuery.data.credit}
+            </ShopAddress>
+          </LabeledField>
+        </Grid2>
+        <Grid2 size={{ xs: 6 }}>
+          <LabeledField label={"Tax Rate"}>
+            <ShopAddress>
+              {shopDeatilsQuery.data.taxRate}
+            </ShopAddress>
           </LabeledField>
         </Grid2>
       </Grid2>
@@ -217,7 +247,7 @@ export const RoomDetailCard = (props) => {
             <TextField
               label="Shop Name"
               variant="outlined"
-              name="shopName"
+              name="ShopName"
               placeholder="Enter Shop Name"
               fullWidth
               value={shopField.shopName}
@@ -248,12 +278,12 @@ export const RoomDetailCard = (props) => {
           </Grid2>
           <Grid2 size={{ xs: 6 }}>
             <TextField
-              label="Room Rent"
+              label="Shop Rent"
               variant="outlined"
-              name="roomRent"
-              placeholder="Enter Room Rent"
+              name="shopRent"
+              placeholder="Enter Shop Rent"
               fullWidth
-              value={shopField.roomRent}
+              value={shopField.roomRent}  //in firebase roomRent.I want to change to shopRent. for changing here
               onChange={handleInputChange}
             />
           </Grid2>
@@ -294,6 +324,6 @@ export const RoomDetailCard = (props) => {
           </Grid2>
         </Grid2>
       </ModalLayout>
-    </RoomDetailCardWrapper>
+    </ShopDetailCardWrapper>
   );
 };

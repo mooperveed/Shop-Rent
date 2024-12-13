@@ -1,9 +1,9 @@
 import { useMutation } from "react-query";
 import {
-  createTenant,
-  updateRoom,
+  // createTenant,
+  // updateRoom,
   updateShop,
-  updateTenant
+  // updateTenant
 } from "../../service/firestoreService";
 
 const MutationId = "updateShop";

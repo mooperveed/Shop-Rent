@@ -6,11 +6,14 @@ import {
 } from "../../service/firestoreService";
 
 const QueryId = "paymentList";
-export const useTenantPaymentsQuery = (roomId) => {
-  return useQuery([QueryId, roomId], {
+// console.log("ji");
+// console.log( getPaymentByShopId(shopId));
+export const useShopPaymentsQuery = (shopId) => {
+  return useQuery([QueryId, shopId], {
     queryFn: async () => {
-      const paymentsSnapshot = await getPaymentByShopId(roomId);
-
+      const paymentsSnapshot = await getPaymentByShopId(shopId);
+   
+  
       const paymentList = paymentsSnapshot.docs.map((payment) => {
         return {
           id: payment.id,
@@ -18,6 +21,7 @@ export const useTenantPaymentsQuery = (roomId) => {
           shopId: payment.data().shopId.id
         };
       });
+      // console.log(paymentList);
       return paymentList;
     },
     onSuccess: (data) => {

@@ -2,7 +2,7 @@ import { Button, Grid2, Modal, TextField, Typography } from "@mui/material";
 import { PaidItem } from "./PaidItem";
 import styled from "@emotion/styled";
 import { useParams } from "react-router-dom";
-import { useTenantPaymentsQuery } from "../../hooks/query/useTenantPayments";
+import { useShopPaymentsQuery } from "../../hooks/query/useShopPayments";
 import { useMemo, useState } from "react";
 import { NewPaymentModal } from "./NewPaymentModal";
 import CircularLoader from "./CircularLoader";
@@ -29,11 +29,11 @@ const PaymentListHeaderLabel = styled("div")(({ theme }) => ({
   color: "#000000"
 }));
 export const PaymentList = () => {
-  const { roomId } = useParams();
+  const { shopId } = useParams();
   const [open, setOpen] = useState(false);
-
-  const paymentsListQuery = useTenantPaymentsQuery(roomId);
-  const shopDetailsQuery = useShopDetailsQuery(roomId);
+// console.log(shopId);
+  const paymentsListQuery = useShopPaymentsQuery(shopId);
+  const shopDetailsQuery = useShopDetailsQuery(shopId);
   const payments = useMemo(() => {
     if (!paymentsListQuery.data) return [];
     return paymentsListQuery.data;
@@ -54,6 +54,7 @@ export const PaymentList = () => {
   if (paymentsListQuery.isError) {
     return <div>Error: {paymentsListQuery.error.message}</div>;
   }
+  console.log(paymentsListQuery.data[2]);
   return (
     <Grid2 container spacing={2}>
       <Grid2

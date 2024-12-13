@@ -1,5 +1,5 @@
-import RoomListPage from "./components/page/roomListPage";
-import { RoomDetailPage } from "./components/page/roomDetailPage";
+import ShopListPage from "./components/page/shopListPage";
+import { ShopDetailPage } from "./components/page/shopDetailPage";
 import { Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -15,8 +15,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         <Routes>
-          <Route path="/" element={<RoomListPage />} />
-          <Route path="/room/:roomId" element={<RoomDetailPage />} />
+          <Route path="/" element={<ShopListPage />} />
+          <Route path="/shop/:shopId" element={<ShopDetailPage />} />
         </Routes>
       </QueryClientProvider>
     </ThemeProvider>

@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Chip, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const RoomCardWrapper = styled(Grid2)(({ theme }) => ({
+const ShopCardWrapper = styled(Grid2)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   padding: "12px",
@@ -25,21 +25,21 @@ const LeftColWrapper = styled("div")(({ theme }) => ({
   gap: "8px",
   maxWidth: "70%"
 }));
-const RoomTenantName = styled("div")(({ theme }) => ({
+const ShopTenantName = styled("div")(({ theme }) => ({
   fontSize: "20px",
   fontWeight: 500,
   [theme.breakpoints.up("md")]: {
     fontSize: "20px"
   }
 }));
-const RoomShopName = styled("div")(({ theme }) => ({
+const ShopName = styled("div")(({ theme }) => ({
   fontSize: "18px",
   fontWeight: 400,
   [theme.breakpoints.up("md")]: {
     fontSize: "20px"
   }
 }));
-const RoomNumber = styled("div")(({ theme }) => ({
+const ShopNumber = styled("div")(({ theme }) => ({
   fontSize: "24px",
   fontWeight: "bold",
   textAlign: "center",
@@ -52,23 +52,23 @@ const RoomNumber = styled("div")(({ theme }) => ({
   }
 }));
 
-const RoomStatus = styled(Chip)(({ theme }) => ({}));
+const ShopStatus = styled(Chip)(({ theme }) => ({}));
 
-export const RoomCard = (props) => {
+export const ShopCard = (props) => {
   const navigate = useNavigate();
-  const handleRoomCardClick = () => {
-    navigate(`/room/${props.id}`);
+  const handleShopCardClick = () => {
+    navigate(`/shop/${props.id}`);
   };
   return (
-    <RoomCardWrapper size={{ xs: 12, md: 4 }} onClick={handleRoomCardClick}>
+    <ShopCardWrapper size={{ xs: 12, md: 4 }} onClick={handleShopCardClick}>
       <LeftColWrapper>
-        <RoomTenantName>{props.name}</RoomTenantName>
-        <RoomShopName>{props.address}</RoomShopName>
+        <ShopTenantName>{props.name}</ShopTenantName>
+        <ShopName>{props.address}</ShopName>
       </LeftColWrapper>
       <RightColWrapper>
-        <RoomStatus size="small" {...props.status} />
-        <RoomNumber>{props.number}</RoomNumber>
+        <ShopStatus size="small" {...props.status} />
+        <ShopNumber>{props.number}</ShopNumber>
       </RightColWrapper>
-    </RoomCardWrapper>
+    </ShopCardWrapper>
   );
 };

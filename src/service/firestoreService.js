@@ -31,7 +31,7 @@ export const getPaymentByTenantId = (id) => {
 };
 export const getPaymentByShopId = (id) => {
   const room = doc(db, COLLECTION.SHOPS, id);
-  return getDocs(
+  return getDocs(               //made changes
     query(collection(db, COLLECTION.PAYMENTS), where("shopId", "==", room))
   );
 };

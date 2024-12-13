@@ -13,6 +13,6 @@ const PageWrapper = styled("div")(({ theme }) => ({
     padding: "24px"
   }
 }));
-export const RoomPageLayout = (props) => {
+export const ShopPageLayout = (props) => {
   return <PageWrapper>{props.children}</PageWrapper>;
 };
