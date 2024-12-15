@@ -1,31 +1,23 @@
 import { useQuery } from "react-query";
-import { getRooms, getTenantById } from "../../service/firestoreService";
+import { getRoomByShopId } from "../../service/firestoreService";
 
 const QueryId = "roomList";
-export const useRoomListQuery = () => {
-  return useQuery([QueryId], {
+
+export const useRoomListQuery = (id) => {
+  return useQuery([QueryId,id], {
     queryFn: async () => {
-      const roomsSnapshot = await getRooms();
+      const roomsSnapshot = await getRoomByShopId(id);
 
-      const roomsWithTenant = await Promise.all(
-        roomsSnapshot.docs.map(async (roomDoc) => {
-          const tenantSnapshot = await getTenantById(
-            roomDoc.data().tenantId.id
-          );
-
-          return {
-            id: roomDoc.id,
-            ...roomDoc.data(),
-            tenantId: tenantSnapshot.id,
-            tenant: tenantSnapshot.data()
-          };
-        })
-      );
-      return roomsWithTenant;
+      const rooms = roomsSnapshot.docs.map((roomDoc) => ({
+        id: roomDoc.id, // Document ID
+        ...roomDoc.data(), // roomNumber and consumerNumber
+      }));
+   console.log("rooms"+roomsSnapshot);
+      return rooms;
     },
     onSuccess: (data) => {
       console.log(QueryId, data);
     },
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 };

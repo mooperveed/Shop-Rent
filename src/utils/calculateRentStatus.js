@@ -72,8 +72,6 @@ export function calculateRentStatus(
 }
 
 export function getRentStatusColorAndText(rentStatus) {
-  console.log("rent status is "+rentStatus);
-  // console.log(rentStatus.taxDue);
   if (!rentStatus) return { label: "N/A" };
   if (rentStatus.isFullyPaidRent) {
     return { color: "success", label: "Fully Paid" };
@@ -82,6 +80,20 @@ export function getRentStatusColorAndText(rentStatus) {
   } else {
     console.log("months due"+rentStatus.monthsDue);
     console.log("rent fullypaid"+rentStatus.isFullyPaidRent);
+    return { color: "warning", label: "Overdue" };
+  }
+}
+
+export function getTaxStatusColorAndText(rentStatus) {
+
+  if (!rentStatus) return { label: "N/A" };
+  if (rentStatus.isFullyPaidTax) {
+    return { color: "success", label: "Tax Fully Paid" };
+  } else if (rentStatus.taxDue > 0) {
+    return { color: "error", label: `${rentStatus.taxDue} tax due` };
+  } else {
+    console.log("tax due"+rentStatus.taxDue);
+    console.log("rent fullytax"+rentStatus.isFullyPaidTax);
     return { color: "warning", label: "Overdue" };
   }
 }

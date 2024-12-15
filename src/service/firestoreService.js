@@ -18,6 +18,12 @@ export const getRooms = () => {
 export const getRoomById = (id) => {
   return getDoc(doc(db, COLLECTION.ROOMS, id));
 };
+export const getRoomByShopId = (id) => {
+  const room = doc(db, COLLECTION.SHOPS, id);
+  return getDocs(               //made changes
+    query(collection(db, COLLECTION.ROOMS), where("shopId", "==", room))
+  );
+};
 
 export const getTenantById = (id) => {
   return getDoc(doc(db, COLLECTION.TENANTS, id));
