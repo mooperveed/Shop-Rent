@@ -36,9 +36,9 @@ export const PaymentList = () => {
   const shopDetailsQuery = useShopDetailsQuery(shopId);
   const payments = useMemo(() => {
     if (!paymentsListQuery.data) return [];
+     
     return paymentsListQuery.data;
   }, [paymentsListQuery.data]);
-
   const toggleCreatePaymentModal = () => {
     setOpen(!open);
   };
@@ -79,13 +79,21 @@ export const PaymentList = () => {
         </Grid2>
       </Grid2>
       <Grid2 container spacing={2} size={{ xs: 12 }}>
-        {(payments.length === 0 || !payments) && (
-          <Typography variant="subtitle1">No payments found</Typography>
-        )}
-        {payments.map((payment) => (
-          <PaidItem key={payment.id} {...payment} />
-        ))}
-      </Grid2>
+  {(payments.length === 0 || !payments) && (
+    <Typography variant="subtitle1">No payments found</Typography>
+  )}
+  {payments
+    .slice() // Create a copy to avoid mutating the original array
+    .sort((a, b) => {
+      const dateA = new Date(a.createdAt * 1000); // Convert Firestore timestamp to Date
+      const dateB = new Date(b.createdAt * 1000);
+      return dateB - dateA; // Sort in descending order (latest date first)
+    })
+    .map((payment) => (
+      <PaidItem key={payment.id} {...payment} />
+    ))}
+</Grid2>
+
       <NewPaymentModal
         open={open}
         onClose={toggleCreatePaymentModal}
