@@ -10,6 +10,7 @@ import { db } from "../../libs/db";
 import { COLLECTION } from "../../constants/db";
 import { library, icon } from '@fortawesome/fontawesome-svg-core';
 import { faStore, faMoneyBillWave, faReceipt, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { deletePayment } from "../../service/firestoreService";
 
 // Add FontAwesome icons to the library
 library.add(faStore, faMoneyBillWave, faReceipt, faCalendarAlt);
@@ -149,9 +150,6 @@ export const PaidItem = (props) => {
     // Save the PDF
     pdfDoc.save(`Receipt_${paymentId}.pdf`);
   };
-  
-  
-  
 
   return (
     <PaidItemWrapper
@@ -171,8 +169,9 @@ export const PaidItem = (props) => {
     onClick={async () => {
       try {
         const receiptDetails = await props; // Fetch from Firebase
+        console.log("props value"+props.createdAt)
         generateReceipt(receiptDetails); // Generate and download the receipt
-        console.log("props "+props.createdAt);
+        // console.log("props  "+props.createdAt);
       } catch (error) {
         console.error("Failed to generate receipt:", error.message);
       }
@@ -182,11 +181,28 @@ export const PaidItem = (props) => {
   </IconButton>
 </Grid2>
 
-        <Grid2>
-          <IconButton size={"small"} variant="contained" color="error">
-            <DeleteIcon />
-          </IconButton>
-        </Grid2>
+<Grid2>
+<IconButton 
+  size="small" 
+  variant="contained" 
+  color="error"
+  onClick={async () => {
+    try {
+      
+      await deletePayment(props.paymentId); // Call delete function with the payment ID
+      props.paymentsListQuery.refetch();
+      console.log("props.paymentsListQuery "+props.paymentsListQuery);
+     
+      console.log(`Payment with ID ${props.paymentId} deleted successfully.`);
+    } catch (error) {
+      console.error("Failed to delete payment:", error.message);
+    }
+  }}
+>
+  <DeleteIcon />
+</IconButton>
+
+    </Grid2>
       </Grid2>
     </PaidItemWrapper>
   );

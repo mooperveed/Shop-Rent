@@ -1,3 +1,4 @@
+// import * as XLSX from "xlsx";
 import {
   addDoc,
   collection,
@@ -7,6 +8,7 @@ import {
   where,
   updateDoc,
   getDocs,
+  deleteDoc
 } from "@firebase/firestore";
 import { db } from "../libs/db";
 import { COLLECTION } from "../constants/db";
@@ -79,3 +81,24 @@ export const createShop = (data) => {
 export const updateShop = (id, data) => {
   return updateDoc(doc(db, COLLECTION.SHOPS, id), data);
 };
+
+
+export const getPayments = () => {
+  return getDocs(collection(db, COLLECTION.PAYMENTS));
+};
+
+export const deletePayment = (paymentId) => {
+  // Reference to the specific payment document in the PAYMENTS collection
+  const paymentRef = doc(db, COLLECTION.PAYMENTS, paymentId);
+
+  // Delete the document
+  return deleteDoc(paymentRef);
+};
+
+
+
+
+
+
+
+

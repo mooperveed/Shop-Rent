@@ -31,6 +31,7 @@ const PaymentListHeaderLabel = styled("div")(({ theme }) => ({
 export const PaymentList = () => {
   const { shopId } = useParams();
   const [open, setOpen] = useState(false);
+  // const [payments, setPayments] = useState([]);
 // console.log(shopId);
   const paymentsListQuery = useShopPaymentsQuery(shopId);
   const shopDetailsQuery = useShopDetailsQuery(shopId);
@@ -47,6 +48,7 @@ export const PaymentList = () => {
     shopDetailsQuery.refetch();
     toggleCreatePaymentModal();
   };
+ 
   if (paymentsListQuery.isLoading || paymentsListQuery.isFetching) {
     return <CircularLoader />;
   }
@@ -54,7 +56,6 @@ export const PaymentList = () => {
   if (paymentsListQuery.isError) {
     return <div>Error: {paymentsListQuery.error.message}</div>;
   }
-  console.log(paymentsListQuery.data[2]);
   return (
     <Grid2 container spacing={2}>
       <Grid2
@@ -85,12 +86,13 @@ export const PaymentList = () => {
   {payments
     .slice() // Create a copy to avoid mutating the original array
     .sort((a, b) => {
-      const dateA = new Date(a.createdAt * 1000); // Convert Firestore timestamp to Date
-      const dateB = new Date(b.createdAt * 1000);
+      const dateA = new Date(a.createdAt.seconds * 1000); // Convert Firestore timestamp to Date
+      const dateB = new Date(b.createdAt.seconds * 1000);
       return dateB - dateA; // Sort in descending order (latest date first)
     })
     .map((payment) => (
-      <PaidItem key={payment.id} {...payment} />
+      <PaidItem key={payment.id} paymentId={payment.id} paymentsListQuery={paymentsListQuery}  {...payment} />
+
     ))}
 </Grid2>
 

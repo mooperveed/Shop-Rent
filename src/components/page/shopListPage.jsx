@@ -18,6 +18,10 @@ import {
   getRentStatusColorAndText
 } from "../../utils/calculateRentStatus";
 
+import {exportToExcel} from "../atom/exportToExcel";
+import { FileDownloadOutlined as FileDownloadOutlinedIcon } from "@mui/icons-material";
+
+
 const ShopPageWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -106,6 +110,15 @@ export default function ShopListPage(props) {
               <AddBoxOutlinedIcon />
             </IconButton>
           </Grid2>
+          <Grid2 size="auto">
+      <IconButton
+        size="small"
+        variant="contained"
+        onClick={exportToExcel}
+      >
+        <FileDownloadOutlinedIcon />
+      </IconButton>
+    </Grid2>
         </Grid2>
         <TextField
           variant="outlined"
