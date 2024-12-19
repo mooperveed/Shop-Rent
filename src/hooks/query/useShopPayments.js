@@ -1,7 +1,6 @@
 import { useQuery } from "react-query";
 import {
   getPaymentByShopId,
-  getPaymentByTenantId,
   getRoomById
 } from "../../service/firestoreService";
 

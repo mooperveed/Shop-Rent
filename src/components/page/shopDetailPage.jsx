@@ -2,7 +2,7 @@ import { styled } from "@mui/material";
 import { ShopDetailCard } from "../atom/ShopDetailsCard";
 import { PaymentList } from "../atom/PaymentList";
 import { ShopPageLayout } from "../atom/ShopPageLayout";
-// import { TenantDetails } from "../atom/TenantDetails";
+
 
 const ShopDetailPageWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -15,7 +15,6 @@ export const ShopDetailPage = (props) => {
     <ShopPageLayout>
       <ShopDetailPageWrapper>
         <ShopDetailCard />
-        {/* <TenantDetails /> */}
         <PaymentList />
       </ShopDetailPageWrapper>
     </ShopPageLayout>

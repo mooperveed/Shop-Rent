@@ -9,7 +9,7 @@ import { getDoc, doc } from "@firebase/firestore";
 import { db } from "../../libs/db";
 import { COLLECTION } from "../../constants/db";
 import { library, icon } from '@fortawesome/fontawesome-svg-core';
-import { faStore, faMoneyBillWave, faReceipt, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { faStore, faMoneyBillWave, faReceipt, faCalendarAlt,faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { deletePayment } from "../../service/firestoreService";
 
 // Add FontAwesome icons to the library
@@ -65,8 +65,13 @@ export const PaidItem = (props) => {
       amount: amountPaid,
       createdAt,
       shopId,
+      isFullyPaidRent,
+      isFullyPaidTax,
+      monthsDue,
+      taxDue,
     } = receiptDetails;
-  
+    console.log("tax due at receiptDetails "+ receiptDetails.taxDue);
+
     const pdfDoc = new jsPDF();
   
     // Fetch shop details to get shopName
@@ -74,12 +79,11 @@ export const PaidItem = (props) => {
     const shopName = shopDoc.exists() ? shopDoc.data().shopName : "Unknown Shop";
   
     // Convert Firebase timestamp to readable date
-    const paidDate = new Date(createdAt.seconds * 1000).toLocaleDateString("en-GB");
-   
+    const paidDate = new Date(createdAt.seconds * 1000).toLocaleDateString();
   
     // // Add background image with low opacity
-    // const backgroundImageUrl = "WhatsApp Image 2024-10-14 at 09.49.25_f9b355ae.jpg"; // Replace with your image URL
-    // pdfDoc.addImage(backgroundImageUrl, 'JPEG', 0, 0, 210, 297, '', 'FAST', 0.5);
+    // const backgroundImageUrl = 'https://example.com/path/to/your/background-image.jpg'; // Replace with your image URL
+    // pdfDoc.addImage(backgroundImageUrl, 'JPEG', 0, 0, 210, 297, '', 'FAST', 0.1);
   
     // Styles
     const lineSpacing = 15;
@@ -117,7 +121,7 @@ export const PaidItem = (props) => {
     pdfDoc.setFont(undefined, 'bold');
     pdfDoc.text(`Amount Paid:`, textX, startY + lineSpacing);
     pdfDoc.setFont(undefined, 'normal');
-    pdfDoc.text(`${amountPaid}`, textX + 30, startY + lineSpacing);
+    pdfDoc.text(`₹${amountPaid}`, textX + 30, startY + lineSpacing);
   
     // Payment ID
     const receiptIcon = icon(faReceipt).html[0];
@@ -135,10 +139,39 @@ export const PaidItem = (props) => {
     pdfDoc.setFont(undefined, 'normal');
     pdfDoc.text(paidDate, textX + 30, startY + 3 * lineSpacing);
   
-    // Add a decorative element
+    // Months Due (only if isFullyPaidRent is false)
+    if (!isFullyPaidRent && monthsDue) {
+      const exclamationIcon = icon(faExclamationCircle).html[0];
+      pdfDoc.addSvgAsImage(exclamationIcon, 20, startY + 4 * lineSpacing - 5, iconSize, iconSize, { color: [231, 76, 60] }); // Red color for attention
+      pdfDoc.setFont(undefined, 'bold');
+      pdfDoc.setTextColor(231, 76, 60); // Red color for emphasis
+      pdfDoc.text(`Months Due:`, textX, startY + 4 * lineSpacing);
+      pdfDoc.setFont(undefined, 'normal');
+      pdfDoc.setTextColor(0, 0, 0); // Reset to black
+      pdfDoc.text(`${monthsDue} month${monthsDue > 1 ? "s" : ""} due`, textX + 30, startY + 4 * lineSpacing);
+
+    }
+    console.log("fullyPaidRent "+isFullyPaidRent,monthsDue);
+
+    // Months Due (only if isFullyPaidRent is false)
+    if (!isFullyPaidTax && taxDue) {
+      const exclamationIcon = icon(faExclamationCircle).html[0];
+      pdfDoc.addSvgAsImage(exclamationIcon, 20, startY + 5 * lineSpacing - 5, iconSize, iconSize, { color: [231, 76, 60] }); // Red color for attention
+      pdfDoc.setFont(undefined, 'bold');
+      pdfDoc.setTextColor(231, 76, 60); // Red color for emphasis
+      pdfDoc.text(`Tax Due:`, textX, startY + 5 * lineSpacing);
+      pdfDoc.setFont(undefined, 'normal');
+      pdfDoc.setTextColor(0, 0, 0); // Reset to black
+      pdfDoc.text(`${taxDue} month${taxDue > 1 ? "s" : ""} due`, textX + 30, startY + 5 * lineSpacing);
+
+    }
+    console.log("fullyPaidTax "+isFullyPaidTax,taxDue);
+  
+    // Adjust the position of the decorative line
+    const decorativeLineY = !isFullyPaidRent && monthsDue ? startY + 6 * lineSpacing : startY + 4 * lineSpacing;
     pdfDoc.setDrawColor(...secondaryColor);
     pdfDoc.setLineWidth(0.5);
-    pdfDoc.line(20, startY + 4 * lineSpacing, 190, startY + 4 * lineSpacing);
+    pdfDoc.line(20, decorativeLineY, 190, decorativeLineY);
   
     // Footer
     pdfDoc.setFillColor(...primaryColor);
@@ -169,7 +202,7 @@ export const PaidItem = (props) => {
     onClick={async () => {
       try {
         const receiptDetails = await props; // Fetch from Firebase
-        console.log("props value"+props.createdAt)
+        console.log("props value:", props.monthsDue);
         generateReceipt(receiptDetails); // Generate and download the receipt
         // console.log("props  "+props.createdAt);
       } catch (error) {

@@ -35,6 +35,7 @@ export const PaymentList = () => {
 // console.log(shopId);
   const paymentsListQuery = useShopPaymentsQuery(shopId);
   const shopDetailsQuery = useShopDetailsQuery(shopId);
+  // const whatsappNumber=Number("9778031030");
   const payments = useMemo(() => {
     if (!paymentsListQuery.data) return [];
      
@@ -91,7 +92,7 @@ export const PaymentList = () => {
       return dateB - dateA; // Sort in descending order (latest date first)
     })
     .map((payment) => (
-      <PaidItem key={payment.id} paymentId={payment.id} paymentsListQuery={paymentsListQuery}  {...payment} />
+      <PaidItem key={payment.id} paymentId={payment.id} paymentsListQuery={paymentsListQuery}   {...payment} />
 
     ))}
 </Grid2>

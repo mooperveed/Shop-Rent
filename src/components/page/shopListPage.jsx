@@ -14,9 +14,9 @@ import { Timestamp } from "@firebase/firestore";
 import { useShopListQuery } from "../../hooks/query/useShopList";
 import { useCreateShopMutation } from "../../hooks/mutation/useCreateShop";
 import {
-  calculateRentStatus,
+  calculateRentTaxStatus,
   getRentStatusColorAndText
-} from "../../utils/calculateRentStatus";
+} from "../../utils/calculateRentTaxStatus";
 
 import {exportToExcel} from "../atom/exportToExcel";
 import { FileDownloadOutlined as FileDownloadOutlinedIcon } from "@mui/icons-material";
@@ -55,7 +55,7 @@ export default function ShopListPage(props) {
         price: shop.roomRent,
         address: shop.ownerAddress,
         status: getRentStatusColorAndText(
-          calculateRentStatus(
+          calculateRentTaxStatus(
             shop.startDate,
             shop.roomRent,
             

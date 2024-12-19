@@ -6,7 +6,7 @@ import {
   updateShop
 } from "../../service/firestoreService";
 import { Timestamp } from "@firebase/firestore";
-import {calculateRentStatus} from "../../utils/calculateRentStatus";
+import {calculateRentTaxStatus} from "../../utils/calculateRentTaxStatus";
 
 const MutationId = "createPayment";
 
@@ -17,7 +17,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
     mutationFn: async (data) => {
       const shopSnapshot = await getShopById(data.shopId);
       const monthlyRent=shopSnapshot.data().roomRent;
-     const rentStatus=calculateRentStatus(shopSnapshot.data().startDate,monthlyRent,shopSnapshot.data().currentBalance,shopSnapshot.data().taxRate,shopSnapshot.data().taxBalance);
+     const rentStatus=calculateRentTaxStatus(shopSnapshot.data().startDate,monthlyRent,shopSnapshot.data().currentBalance,shopSnapshot.data().taxRate,shopSnapshot.data().taxBalance);
       const taxAmountMonth=Number(monthlyRent)*(Number(shopSnapshot.data().taxRate)/100);
       const maxTaxAmount=  Number(rentStatus.taxDue) *Number(taxAmountMonth);
       const maxAmount=Number(monthlyRent)*rentStatus.monthsDue;
@@ -65,7 +65,11 @@ export const useCreatePaymentMutation = (onSuccess) => {
         updatedAt: Timestamp.now(),
         updatedFromAmount: currentBalance,
         updatedToAmount: updatedBalanceRent,
-        deletedAt: null
+        deletedAt: null,
+        monthsDue:rentStatus.monthsDue,
+        taxDue:rentStatus.taxDue,
+        isFullyPaidRent:rentStatus.isFullyPaidRent,
+        isFullyPaidTax:rentStatus.isFullyPaidTax,
       };
       return addNewPayment(paymentData);
     },

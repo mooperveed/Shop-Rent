@@ -1,4 +1,3 @@
-// import * as XLSX from "xlsx";
 import {
   addDoc,
   collection,
@@ -20,6 +19,7 @@ export const getRooms = () => {
 export const getRoomById = (id) => {
   return getDoc(doc(db, COLLECTION.ROOMS, id));
 };
+
 export const getRoomByShopId = (id) => {
   const room = doc(db, COLLECTION.SHOPS, id);
   return getDocs(               //made changes
@@ -27,16 +27,7 @@ export const getRoomByShopId = (id) => {
   );
 };
 
-export const getTenantById = (id) => {
-  return getDoc(doc(db, COLLECTION.TENANTS, id));
-};
 
-export const getPaymentByTenantId = (id) => {
-  const tenant = doc(db, COLLECTION.TENANTS, id);
-  return getDocs(
-    query(collection(db, COLLECTION.PAYMENTS), where("tenantId", "==", tenant))
-  );
-};
 export const getPaymentByShopId = (id) => {
   const room = doc(db, COLLECTION.SHOPS, id);
   return getDocs(               //made changes
@@ -52,19 +43,16 @@ export const addNewPayment = (data) => {
   });
 };
 
-export const createTenant = (data) => {
-  return addDoc(collection(db, COLLECTION.TENANTS), data);
-};
 
+///////////////////////
+// room manipulation which is for future room edit feature
 export const createRoom = (data) => {
   return addDoc(collection(db, COLLECTION.ROOMS), data);
 };
 export const updateRoom = (id, data) => {
   return updateDoc(doc(db, COLLECTION.ROOMS, id), data);
 };
-export const updateTenant = (id, data) => {
-  return updateDoc(doc(db, COLLECTION.TENANTS, id), data);
-};
+///////////////////////
 
 export const getShops = () => {
   return getDocs(collection(db, COLLECTION.SHOPS));

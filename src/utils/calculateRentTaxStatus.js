@@ -1,4 +1,4 @@
-export function calculateRentStatus(
+export function calculateRentTaxStatus(
   startingDate,
   monthlyRent,
   currentBalance,
@@ -16,39 +16,36 @@ export function calculateRentStatus(
     return null;
   }
   
-  // Step 1: Convert Firebase Timestamp to JavaScript Date
+  //  Convert Firebase Timestamp to JavaScript Date
   const startDate = startingDate.toDate();
   const currentDate = new Date();
 
   const taxAmount=monthlyRent*(taxRate/100);
 
-  // Step 2: Calculate the total number of months since the starting date
+  //  Calculate the total number of months since the starting date
   const totalMonthsElapsed =
     (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
     (currentDate.getMonth() - startDate.getMonth());
 
-  // Step 3: Calculate the monthly rent
-  // const monthlyRent = dailyRent * 30;
 
-  // Step 4: Calculate the total rent due for the months that have passed
-  // const totalRentDue = Number(totalMonthsElapsed) * (Number(monthlyRent)+Number(taxAmount));
+
+  //  Calculate the total rent due for the months that have passed
   const totalRentDue = Number(totalMonthsElapsed) * Number(monthlyRent);
   const totalTaxDue=  Number(totalMonthsElapsed) *Number(taxAmount);
-  console.log("tax amount "+taxAmount);
 
+  console.log("tax amount "+taxAmount);
   console.log("total months  elapsed "+totalMonthsElapsed );
-  
   console.log("total tax due "+totalTaxDue );
 
 
-  // Step 5: Calculate the total payments made
+  //  Calculate the total payments made
   const totalPaidRent = currentBalance;
   const totalPaidTax=taxBalance;
   console.log("total paid tax "+totalPaidTax);
   console.log("totalRentDue"+totalRentDue);
   console.log("totalPaidRent"+totalPaidRent);
 
-  // Step 6: Determine rent status based on monthly dues
+  // Determine rent status based on monthly dues
   const rentStatus = {
     isFullyPaidRent: totalPaidRent >= totalRentDue,
     isFullyPaidTax:totalPaidTax>=totalTaxDue,

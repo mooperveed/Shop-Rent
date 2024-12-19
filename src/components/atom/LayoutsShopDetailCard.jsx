@@ -9,14 +9,14 @@ import {
   import { ModalLayout } from "./ModalLayout";
   import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
   import {
-    calculateRentStatus,
+    calculateRentTaxStatus,
     getRentStatusColorAndText,getTaxStatusColorAndText
-  } from "../../utils/calculateRentStatus";
+  } from "../../utils/calculateRentTaxStatus";
   import { ClickDetails } from "./ClickDetailsLayout";
 
   import EditIcon from "@mui/icons-material/Edit";
   import { useRoomListQuery } from "../../hooks/query/useRoomList";
-  // const { data: roomConsumerData } = useRoomListQuery();
+
 
 export const LayoutsShopDetailCard= ({
      // Modal States
@@ -75,7 +75,7 @@ export const LayoutsShopDetailCard= ({
         <Grid2 size="auto">
           <Chip
             {...getRentStatusColorAndText(
-              calculateRentStatus(
+              calculateRentTaxStatus(
                 shopDeatilsQuery.data.startDate,
                 shopDeatilsQuery.data.roomRent,
                 shopDeatilsQuery.data.currentBalance,
@@ -241,7 +241,7 @@ export const LayoutsShopDetailCard= ({
       <Grid2 size="auto">
           <Chip
             {...getTaxStatusColorAndText(
-              calculateRentStatus(
+              calculateRentTaxStatus(
                 shopDeatilsQuery.data.startDate,
                 shopDeatilsQuery.data.roomRent,
                 shopDeatilsQuery.data.currentBalance,
@@ -255,7 +255,7 @@ export const LayoutsShopDetailCard= ({
         <Grid2 size="auto">
         <LabeledField label={"Paid Amount"}>
           <ShopAddress>
-            {calculateRentStatus.totalPaidTax}
+            {calculateRentTaxStatus.totalPaidTax}
           </ShopAddress>
         </LabeledField>
         </Grid2>
