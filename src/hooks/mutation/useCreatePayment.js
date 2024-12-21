@@ -61,6 +61,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
       const paymentData = {
         amount:data.amount,
         shopId: data.shopId,
+        noteAtPayment:data.noteAtPayment,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         updatedFromAmount: currentBalance,

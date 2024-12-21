@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "@emotion/styled";
 import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
 import { Grid2, IconButton } from "@mui/material";
@@ -56,6 +57,15 @@ const PaidPreviousBalance = styled("div")(({ theme }) => ({
   fontSize: "16px",
   fontWeight: 500,
   color: "#000000"
+}));
+
+const NoteAtPayment = styled("div")(({ theme }) => ({
+  fontSize: "14px",
+  fontStyle: "italic",
+  fontWeight: 400,
+  color: "#555555",
+  marginTop: "8px",
+  marginBottom: "8px",
 }));
 
 export const PaidItem = (props) => {
@@ -196,9 +206,11 @@ export const PaidItem = (props) => {
         <PaidAmount>{props.amount}</PaidAmount>
         <PaidDate>Paid on {formatTimestampToDate(props.createdAt)}</PaidDate>
       </Grid2>
-      {/* <Grid2>
-
-     </Grid2> */}
+      <Grid2>
+      {props.noteAtPayment && (
+          <NoteAtPayment>Note: {props.noteAtPayment}</NoteAtPayment>
+        )}
+     </Grid2>
       <Grid2 container spacing={1} alignItems={"center"}>
         <Grid2>
   <IconButton 
