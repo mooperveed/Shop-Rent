@@ -12,6 +12,8 @@ import { library, icon } from '@fortawesome/fontawesome-svg-core';
 import { faStore, faMoneyBillWave, faReceipt, faCalendarAlt,faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { deletePayment } from "../../service/firestoreService";
 
+
+
 // Add FontAwesome icons to the library
 library.add(faStore, faMoneyBillWave, faReceipt, faCalendarAlt);
 
@@ -194,6 +196,9 @@ export const PaidItem = (props) => {
         <PaidAmount>{props.amount}</PaidAmount>
         <PaidDate>Paid on {formatTimestampToDate(props.createdAt)}</PaidDate>
       </Grid2>
+      {/* <Grid2>
+
+     </Grid2> */}
       <Grid2 container spacing={1} alignItems={"center"}>
         <Grid2>
   <IconButton 
@@ -224,7 +229,7 @@ export const PaidItem = (props) => {
       
       await deletePayment(props.paymentId); // Call delete function with the payment ID
       props.paymentsListQuery.refetch();
-      console.log("props.paymentsListQuery "+props.paymentsListQuery);
+      console.log("props.paymentsListQuery ",props.paymentsListQuery);
      
       console.log(`Payment with ID ${props.paymentId} deleted successfully.`);
     } catch (error) {

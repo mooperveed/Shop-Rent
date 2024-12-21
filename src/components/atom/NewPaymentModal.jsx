@@ -6,17 +6,19 @@ import { ModalLayout } from "./ModalLayout";
 
 export const NewPaymentModal = (props) => {
   const { shopId } = useParams();
-  // console.log(shopId);
   const [amount, setAmount] = React.useState(0);
+
   const createPaymentMutation = useCreatePaymentMutation(props.onSuccess);
 
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
   };
+ 
+
   const handleSubmitAmount = () => {
     createPaymentMutation.mutate({
       shopId,
-      amount
+      amount,
     });
   };
 

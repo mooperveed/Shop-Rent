@@ -8,6 +8,8 @@ import {
   } from "@mui/material";
   import { ModalLayout } from "./ModalLayout";
   import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
+  import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+
   import {
     calculateRentTaxStatus,
     getRentStatusColorAndText,getTaxStatusColorAndText
@@ -138,6 +140,20 @@ export const LayoutsShopDetailCard= ({
       </LabeledField>
 
       </Grid2>
+      <Grid2>
+  <IconButton 
+    size="small" 
+    variant="contained" 
+    onClick={() => {
+      const url = `https://wa.me/${shopDeatilsQuery.data.phoneNumber}`;
+      console.log("Redirecting to WhatsApp:", url); // For debugging
+      window.open(url, '_blank'); // Opens the link in a new tab
+    }}
+  >
+    <WhatsAppIcon />
+  </IconButton>
+</Grid2>
+
    
     </Grid2>
   

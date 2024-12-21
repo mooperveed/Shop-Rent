@@ -44,6 +44,9 @@ const LoginPage = () => {
         case 'auth/user-disabled':
           setError('This account has been disabled.');
           break;
+        case 'auth/network-request-failed':
+           setError('network request faild.');
+           break;  
         case 'auth/invalid-credential':
             setError('Invalid credentials.');
             break; 
