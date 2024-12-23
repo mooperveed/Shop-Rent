@@ -1,7 +1,7 @@
 import { styled } from "@mui/system";
 import React, { useMemo, useState } from "react";
 import { ShopList } from "../atom/ShopList";
-import { Grid2, IconButton, TextField, Typography } from "@mui/material";
+import { Grid2, IconButton, TextField, Typography, Button } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -20,7 +20,10 @@ import {
 
 import {exportToExcel} from "../atom/exportToExcel";
 import { FileDownloadOutlined as FileDownloadOutlinedIcon } from "@mui/icons-material";
-
+import { useNavigate } from "react-router-dom";
+import { LogOut } from 'lucide-react';
+import { auth } from "../../libs/db";
+import { signOut } from "firebase/auth";
 
 const ShopPageWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -93,6 +96,20 @@ export default function ShopListPage(props) {
     const { name, value } = e.target;
     setShopField((prev) => ({ ...prev, [name]: value }));
   };
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  const navigateToLoginPage = () => {
+    navigate("/login"); // Navigates to the login page
+  };
 
   return (
     <ShopPageLayout>
@@ -101,24 +118,37 @@ export default function ShopListPage(props) {
           <Grid2 size="auto">
             <Typography variant="h6">Shop List</Typography>
           </Grid2>
-          <Grid2 size="auto">
-            <IconButton
-              size={"small"}
-              variant="contained"
-              onClick={toggleCreateShopModal}
-            >
-              <AddBoxOutlinedIcon />
-            </IconButton>
+          <Grid2 container size="auto" spacing={2} alignItems="center">
+            <Grid2>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<LogOut />}
+                onClick={handleSignOut}
+                size="small"
+              >
+                Sign Out
+              </Button>
+            </Grid2>
+            <Grid2>
+              <IconButton
+                size={"small"}
+                variant="contained"
+                onClick={toggleCreateShopModal}
+              >
+                <AddBoxOutlinedIcon />
+              </IconButton>
+            </Grid2>
+            <Grid2>
+              <IconButton
+                size="small"
+                variant="contained"
+                onClick={exportToExcel}
+              >
+                <FileDownloadOutlinedIcon />
+              </IconButton>
+            </Grid2>
           </Grid2>
-          <Grid2 size="auto">
-      <IconButton
-        size="small"
-        variant="contained"
-        onClick={exportToExcel}
-      >
-        <FileDownloadOutlinedIcon />
-      </IconButton>
-    </Grid2>
         </Grid2>
         <TextField
           variant="outlined"
@@ -221,3 +251,4 @@ export default function ShopListPage(props) {
     </ShopPageLayout>
   );
 }
+
