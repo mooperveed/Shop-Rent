@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState }  from "react";
 import styled from "@emotion/styled";
 import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
-import { Grid2, IconButton } from "@mui/material";
+import { Grid2, IconButton,CircularProgress } from "@mui/material";
 import SystemUpdateAltOutlinedIcon from "@mui/icons-material/SystemUpdateAltOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
-import { getDoc, doc, updateDoc} from "@firebase/firestore";
+import { getDoc, doc, updateDoc,runTransaction} from "@firebase/firestore";
 import { db } from "../../libs/db";
 import { COLLECTION } from "../../constants/db";
 import { library, icon } from '@fortawesome/fontawesome-svg-core';
@@ -71,70 +71,88 @@ const NoteAtPayment = styled("div")(({ theme }) => ({
 
 export const PaidItem = (props) => {
   const shopDetailsQuery = useShopDetailsQuery(props.shopId);
-
+  const [isDeleting, setIsDeleting] = useState(false);
    console.log("props ",props);
+ 
    const updateShopBalance = async (shopId, amount) => {
     try {
-      const shopRef = doc(db, COLLECTION.SHOPS, shopId);
-      const shopSnap = await getDoc(shopRef);
+      await runTransaction(db, async (transaction) => {
+        const shopRef = doc(db, COLLECTION.SHOPS, shopId);
+        const shopSnap = await transaction.get(shopRef);
 
-      if (!shopSnap.exists()) {
-        throw new Error(`Shop with ID ${shopId} not found`);
-      }
-
-      const shopData = shopSnap.data();
-      let { credit, taxBalance, currentBalance, roomRent } = shopData;
-
-      // First, subtract from credit
-      if (credit >= amount) {
-        credit -= amount;
-        amount = 0;
-      } else {
-        amount -= credit;
-        credit = 0;
-      }
-
-      // Then, subtract from taxBalance
-      if (amount > 0 && taxBalance >= amount) {
-        taxBalance -= amount;
-        amount = 0;
-      } else if (amount > 0) {
-        amount -= taxBalance;
-        taxBalance = 0;
-      }
-
-      // Finally, subtract from currentBalance
-      if (amount > 0) {
-        if (currentBalance >= amount) {
-          currentBalance -= amount;
-        } else {
-          // If we don't have enough balance, we stop here
-          currentBalance = 0;
+        if (!shopSnap.exists()) {
+          throw new Error(`Shop with ID ${shopId} not found`);
         }
-      }
 
-      // Calculate new credit based on remaining balance
-      const newCredit = currentBalance % roomRent;
-      currentBalance -= newCredit;
-      credit += newCredit;
+        const shopData = shopSnap.data();
+        let { credit, taxBalance, currentBalance, roomRent } = shopData;
 
-      // Update Firestore
-      await updateDoc(shopRef, {
-        credit,
-        taxBalance,
-        currentBalance
+        // Subtract from credit first
+        if (credit >= amount) {
+          credit -= amount;
+          amount = 0;
+        } else {
+          amount -= credit;
+          credit = 0;
+        }
+
+        // Then subtract from taxBalance
+        if (amount > 0 && taxBalance >= amount) {
+          taxBalance -= amount;
+          amount = 0;
+        } else if (amount > 0) {
+          amount -= taxBalance;
+          taxBalance = 0;
+        }
+
+        // Finally subtract from currentBalance
+        if (amount > 0) {
+          if (currentBalance >= amount) {
+            currentBalance -= amount;
+          } else {
+            currentBalance = 0;
+          }
+        }
+
+        // Recalculate credit based on remaining balance
+        const newCredit = currentBalance % roomRent;
+        currentBalance -= newCredit;
+        credit += newCredit;
+
+        transaction.update(shopRef, {
+          credit,
+          taxBalance,
+          currentBalance
+        });
       });
 
-      return {
-        success: true,
-        message: `Shop balance updated successfully.`,
-      };
+      return { success: true, message: 'Shop balance updated successfully.' };
     } catch (error) {
       console.error('Error updating shop balance:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to update shop balance',
-      };
+      return { success: false, message: error.message || 'Failed to update shop balance' };
+    }
+  };
+
+  const handleDelete = async () => {
+    if (isDeleting) return; // Prevent multiple clicks
+
+    setIsDeleting(true);
+    try {
+      const result = await updateShopBalance(props.shopId, props.amount);
+      if (result.success) {
+        await deletePayment(props.paymentId);
+        props.paymentsListQuery.refetch();
+        shopDetailsQuery.refetch();
+        console.log(`Payment with ID ${props.paymentId} deleted successfully.`);
+      } else {
+        console.error("Failed to update shop balance:", result.message);
+        // Revert optimistic update here if needed
+      }
+    } catch (error) {
+      console.error("Failed to delete payment:", error.message);
+      // Revert optimistic update here if needed
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -302,30 +320,17 @@ export const PaidItem = (props) => {
   </IconButton>
 </Grid2>
 
-<Grid2>
-<IconButton 
-  size="small" 
-  variant="contained" 
-  color="error"
-  onClick={async () => {
-    try {
-      
-      await deletePayment(props.paymentId); // Call delete function with the payment ID
-      props.paymentsListQuery.refetch();
-      await updateShopBalance(props.shopId,props.amount);
-      shopDetailsQuery.refetch();
-      console.log("props.paymentsListQuery ",props.paymentsListQuery);
-     
-      console.log(`Payment with ID ${props.paymentId} deleted successfully.`);
-    } catch (error) {
-      console.error("Failed to delete payment:", error.message);
-    }
-  }}
->
-  <DeleteIcon />
-</IconButton>
-
-    </Grid2>
+     <Grid2>
+          <IconButton 
+            size="small" 
+            variant="contained" 
+            color="error"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? <CircularProgress size={24} /> : <DeleteIcon />}
+          </IconButton>
+        </Grid2>
       </Grid2>
     </PaidItemWrapper>
   );
