@@ -55,13 +55,13 @@ export function calculateRentTaxStatus(
 
   if (!rentStatus.isFullyPaidRent) {
     // Calculate the remaining balance
-    const remainingBalance = totalRentDue - totalPaidRent;
+    const pendingRentAmount = totalRentDue - totalPaidRent;
     // Calculate months due based on remaining balance
-    rentStatus.monthsDue = Number(Math.floor(remainingBalance / monthlyRent));
+    rentStatus.monthsDue = Number(Math.floor(pendingRentAmount / monthlyRent));
   }
   if (!rentStatus.isFullyPaidTax) {
-    const remainingTaxBalance = totalTaxDue - totalPaidTax;
-    rentStatus.taxDue = Number(Math.floor(remainingTaxBalance / taxAmount));
+    const pendingTaxAmount = totalTaxDue - totalPaidTax;
+    rentStatus.taxDue = Number(Math.floor(pendingTaxAmount / taxAmount));
   }
   console.log(" taxDue is  "+rentStatus.taxDue);
   // if(rentStatus.monthsDue===0)rentStatus.isFullyPaidRent=true;
@@ -75,9 +75,7 @@ export function getRentStatusColorAndText(rentStatus) {
   } else if (rentStatus.monthsDue > 0) {
     return { color: "error", label: `${rentStatus.monthsDue} months due` };
   } else {
-    console.log("months due"+rentStatus.monthsDue);
-    console.log("rent fullypaid"+rentStatus.isFullyPaidRent);
-    return { color: "warning", label: "Overdue" };
+    return { color: "warning", label: `${rentStatus.monthsDue}` };
   }
 }
 
@@ -89,8 +87,6 @@ export function getTaxStatusColorAndText(rentStatus) {
   } else if (rentStatus.taxDue > 0) {
     return { color: "error", label: `${rentStatus.taxDue} tax due` };
   } else {
-    console.log("tax due"+rentStatus.taxDue);
-    console.log("rent fullytax"+rentStatus.isFullyPaidTax);
-    return { color: "warning", label: "Overdue" };
+    return { color: "warning", label: "Error" };
   }
 }

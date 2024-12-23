@@ -75,50 +75,69 @@ export const PaidItem = (props) => {
    console.log("props ",props);
    const updateShopBalance = async (shopId, amount) => {
     try {
-      // Get the shop document
       const shopRef = doc(db, COLLECTION.SHOPS, shopId);
       const shopSnap = await getDoc(shopRef);
-  
+
       if (!shopSnap.exists()) {
-        throw new Error('Shop not found');
+        throw new Error(`Shop with ID ${shopId} not found`);
       }
-  
+
       const shopData = shopSnap.data();
-      const { credit, taxBalance, currentBalance} = shopData;
-  
-      let updatedField = '';
-      let updatedAmount = 0;
-  
+      let { credit, taxBalance, currentBalance, roomRent } = shopData;
+
+      // First, subtract from credit
       if (credit >= amount) {
-        updatedField = 'credit';
-        updatedAmount = credit - amount;
-      } else if (taxBalance >= amount) {
-        updatedField = 'taxBalance';
-        updatedAmount = taxBalance - amount;
+        credit -= amount;
+        amount = 0;
       } else {
-        updatedField = 'currentBalance';
-        updatedAmount = currentBalance - amount;
+        amount -= credit;
+        credit = 0;
       }
-  
-      // Update the shop document
+
+      // Then, subtract from taxBalance
+      if (amount > 0 && taxBalance >= amount) {
+        taxBalance -= amount;
+        amount = 0;
+      } else if (amount > 0) {
+        amount -= taxBalance;
+        taxBalance = 0;
+      }
+
+      // Finally, subtract from currentBalance
+      if (amount > 0) {
+        if (currentBalance >= amount) {
+          currentBalance -= amount;
+        } else {
+          // If we don't have enough balance, we stop here
+          currentBalance = 0;
+        }
+      }
+
+      // Calculate new credit based on remaining balance
+      const newCredit = currentBalance % roomRent;
+      currentBalance -= newCredit;
+      credit += newCredit;
+
+      // Update Firestore
       await updateDoc(shopRef, {
-        [updatedField]: updatedAmount
+        credit,
+        taxBalance,
+        currentBalance
       });
-  
+
       return {
         success: true,
-        message: `Updated ${updatedField} successfully`,
-        updatedField,
-        updatedAmount
+        message: `Shop balance updated successfully.`,
       };
     } catch (error) {
       console.error('Error updating shop balance:', error);
       return {
         success: false,
-        message: error.message || 'Failed to update shop balance'
+        message: error.message || 'Failed to update shop balance',
       };
     }
   };
+
 
   
 
