@@ -9,7 +9,6 @@ import dayjs from "dayjs";
 import { ShopPageLayout } from "../atom/ShopPageLayout";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import { ModalLayout } from "../atom/ModalLayout";
-// import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
 import { Timestamp } from "@firebase/firestore";
 import { useShopListQuery } from "../../hooks/query/useShopList";
 import { useCreateShopMutation } from "../../hooks/mutation/useCreateShop";
@@ -107,9 +106,7 @@ export default function ShopListPage(props) {
     }
   };
 
-  const navigateToLoginPage = () => {
-    navigate("/login"); // Navigates to the login page
-  };
+ 
 
   return (
     <ShopPageLayout>

@@ -1,7 +1,6 @@
 import { useMutation } from "react-query";
 import {
   addNewPayment,
-  getRoomById,
   getShopById,
   updateShop
 } from "../../service/firestoreService";
@@ -45,18 +44,6 @@ export const useCreatePaymentMutation = (onSuccess) => {
     const updatedBalanceRent = Number(currentBalance)+Number(rentAmount);
     const updatedBalanceTax = Number(taxBalance)+Number(taxAmount);
     const updatedCredited = credit;
-
-
-
-      
-      // const amount=Number(paymentAmount)+Number(shopSnapshot.data().credit);
-      // const new_credit=Number(amount)% (Number(shopSnapshot.data().roomRent)*(1 + Number(shopSnapshot.data().taxRate)/100));
-      // const final_amount=amount-new_credit;
-      // const updatedBalanceRent = Number(currentBalance)+Number(final_amount);
-      // console.log("updated balance"+updatedBalanceRent)
-      
-     
-     
       await updateShop(shopSnapshot.id, { currentBalance: updatedBalanceRent,credit:updatedCredited,taxBalance:updatedBalanceTax });
       const paymentData = {
         amount:data.amount,

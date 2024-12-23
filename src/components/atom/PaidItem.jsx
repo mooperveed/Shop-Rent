@@ -30,10 +30,10 @@ const PaidItemWrapper = styled(Grid2)(({ theme }) => ({
     padding: "16px"
   }
 }));
-const PaidItemLeftCol = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column"
-}));
+// const PaidItemLeftCol = styled("div")(({ theme }) => ({
+//   display: "flex",
+//   flexDirection: "column"
+// }));
 const PaidAmount = styled("div")(({ theme }) => ({
   fontSize: "24px",
   fontWeight: 500,
@@ -44,21 +44,21 @@ const PaidDate = styled("div")(({ theme }) => ({
   fontWeight: 500,
   color: "#000000"
 }));
-const PaidItemRightCol = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px"
-}));
-const PaidCurrentBalance = styled("div")(({ theme }) => ({
-  fontSize: "16px",
-  fontWeight: 500,
-  color: "#000000"
-}));
-const PaidPreviousBalance = styled("div")(({ theme }) => ({
-  fontSize: "16px",
-  fontWeight: 500,
-  color: "#000000"
-}));
+// const PaidItemRightCol = styled("div")(({ theme }) => ({
+//   display: "flex",
+//   flexDirection: "column",
+//   gap: "8px"
+// }));
+// const PaidCurrentBalance = styled("div")(({ theme }) => ({
+//   fontSize: "16px",
+//   fontWeight: 500,
+//   color: "#000000"
+// }));
+// const PaidPreviousBalance = styled("div")(({ theme }) => ({
+//   fontSize: "16px",
+//   fontWeight: 500,
+//   color: "#000000"
+// }));
 
 const NoteAtPayment = styled("div")(({ theme }) => ({
   fontSize: "14px",
