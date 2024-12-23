@@ -178,6 +178,7 @@ export const PaidItem = (props) => {
     // Fetch shop details to get shopName
     const shopDoc = await getDoc(doc(db, COLLECTION.SHOPS, shopId));
     const shopName = shopDoc.exists() ? shopDoc.data().shopName : "Unknown Shop";
+    const credit = shopDoc.exists() ? shopDoc.data().credit : "Unknown Shop";
   
     // Convert Firebase timestamp to readable date
     const paidDate = new Date(createdAt.seconds * 1000).toLocaleDateString();
@@ -267,9 +268,18 @@ export const PaidItem = (props) => {
 
     }
     console.log("fullyPaidTax "+isFullyPaidTax,taxDue);
-  
+    if (!isFullyPaidTax || !isFullyPaidRent) {
+      const exclamationIcon = icon(faExclamationCircle).html[0];
+      pdfDoc.addSvgAsImage(exclamationIcon, 20, startY + 6 * lineSpacing - 5, iconSize, iconSize, { color: [46, 204, 113] }); // Green color for attention
+      pdfDoc.setFont(undefined, 'bold');
+      pdfDoc.setTextColor(46, 204, 113); // Green color for emphasis
+      pdfDoc.text("Credit:", textX, startY + 6 * lineSpacing);
+      pdfDoc.setFont(undefined, 'normal');
+      pdfDoc.setTextColor(0, 0, 0); // Reset to black
+      pdfDoc.text(String(credit), textX + 30, startY + 6 * lineSpacing);
+    }
     // Adjust the position of the decorative line
-    const decorativeLineY = !isFullyPaidRent && monthsDue ? startY + 6 * lineSpacing : startY + 4 * lineSpacing;
+    const decorativeLineY = !isFullyPaidRent && monthsDue ? startY + 7 * lineSpacing : startY + 5 * lineSpacing;
     pdfDoc.setDrawColor(...secondaryColor);
     pdfDoc.setLineWidth(0.5);
     pdfDoc.line(20, decorativeLineY, 190, decorativeLineY);
