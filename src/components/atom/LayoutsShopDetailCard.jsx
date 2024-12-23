@@ -16,7 +16,7 @@ import {
   } from "../../utils/calculateRentTaxStatus";
   import { ClickDetails } from "./ClickDetailsLayout";
 
-  import EditIcon from "@mui/icons-material/Edit";
+  // import EditIcon from "@mui/icons-material/Edit";
   import { useRoomListQuery } from "../../hooks/query/useRoomList";
 
 
@@ -88,11 +88,11 @@ export const LayoutsShopDetailCard= ({
             size="small"
           />
         </Grid2>
-        <Grid2>
+        {/* <Grid2>
           <IconButton size={"small"} variant="contained" onClick={toggleOpen}>
             <EditIcon />
           </IconButton>
-        </Grid2>
+        </Grid2> */}
       </Grid2>
     </Grid2>
     <Grid2 container size={{ xs: 12 }} rowGap={2}>

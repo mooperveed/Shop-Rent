@@ -127,7 +127,7 @@ export default function ShopListPage(props) {
                 Sign Out
               </Button>
             </Grid2>
-            <Grid2>
+            {/* <Grid2>
               <IconButton
                 size={"small"}
                 variant="contained"
@@ -135,7 +135,7 @@ export default function ShopListPage(props) {
               >
                 <AddBoxOutlinedIcon />
               </IconButton>
-            </Grid2>
+            </Grid2> */}
             <Grid2>
               <IconButton
                 size="small"
