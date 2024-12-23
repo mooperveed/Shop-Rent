@@ -6,12 +6,13 @@ import SystemUpdateAltOutlinedIcon from "@mui/icons-material/SystemUpdateAltOutl
 import DeleteIcon from "@mui/icons-material/Delete";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
-import { getDoc, doc } from "@firebase/firestore";
+import { getDoc, doc, updateDoc} from "@firebase/firestore";
 import { db } from "../../libs/db";
 import { COLLECTION } from "../../constants/db";
 import { library, icon } from '@fortawesome/fontawesome-svg-core';
 import { faStore, faMoneyBillWave, faReceipt, faCalendarAlt,faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { deletePayment } from "../../service/firestoreService";
+import { useShopDetailsQuery } from "../../hooks/query/useShopDetails";
 
 
 
@@ -69,8 +70,59 @@ const NoteAtPayment = styled("div")(({ theme }) => ({
 }));
 
 export const PaidItem = (props) => {
+  const shopDetailsQuery = useShopDetailsQuery(props.shopId);
 
+   console.log("props ",props);
+   const updateShopBalance = async (shopId, amount) => {
+    try {
+      // Get the shop document
+      const shopRef = doc(db, COLLECTION.SHOPS, shopId);
+      const shopSnap = await getDoc(shopRef);
+  
+      if (!shopSnap.exists()) {
+        throw new Error('Shop not found');
+      }
+  
+      const shopData = shopSnap.data();
+      const { credit, taxBalance, currentBalance} = shopData;
+  
+      let updatedField = '';
+      let updatedAmount = 0;
+  
+      if (credit >= amount) {
+        updatedField = 'credit';
+        updatedAmount = credit - amount;
+      } else if (taxBalance >= amount) {
+        updatedField = 'taxBalance';
+        updatedAmount = taxBalance - amount;
+      } else {
+        updatedField = 'currentBalance';
+        updatedAmount = currentBalance - amount;
+      }
+  
+      // Update the shop document
+      await updateDoc(shopRef, {
+        [updatedField]: updatedAmount
+      });
+  
+      return {
+        success: true,
+        message: `Updated ${updatedField} successfully`,
+        updatedField,
+        updatedAmount
+      };
+    } catch (error) {
+      console.error('Error updating shop balance:', error);
+      return {
+        success: false,
+        message: error.message || 'Failed to update shop balance'
+      };
+    }
+  };
 
+  
+
+ 
   const generateReceipt = async (receiptDetails) => {
     const {
       id: paymentId,
@@ -133,7 +185,7 @@ export const PaidItem = (props) => {
     pdfDoc.setFont(undefined, 'bold');
     pdfDoc.text(`Amount Paid:`, textX, startY + lineSpacing);
     pdfDoc.setFont(undefined, 'normal');
-    pdfDoc.text(`₹${amountPaid}`, textX + 30, startY + lineSpacing);
+    pdfDoc.text(`Rs.${amountPaid}`, textX + 30, startY + lineSpacing);
   
     // Payment ID
     const receiptIcon = icon(faReceipt).html[0];
@@ -241,6 +293,8 @@ export const PaidItem = (props) => {
       
       await deletePayment(props.paymentId); // Call delete function with the payment ID
       props.paymentsListQuery.refetch();
+      await updateShopBalance(props.shopId,props.amount);
+      shopDetailsQuery.refetch();
       console.log("props.paymentsListQuery ",props.paymentsListQuery);
      
       console.log(`Payment with ID ${props.paymentId} deleted successfully.`);

@@ -18,7 +18,6 @@ export const NewPaymentModal = (props) => {
     setNoteAtPayment(event.target.value);
    
   };
-  console.log("noteAtPayment is ",noteAtPayment);
   const handleSubmitAmount = () => {
     createPaymentMutation.mutate({
       shopId,
