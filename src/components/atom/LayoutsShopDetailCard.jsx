@@ -4,8 +4,15 @@ import {
     Grid2,
     IconButton,
     TextField,
-    Typography
+    Typography,
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
   } from "@mui/material";
+  
   import { ModalLayout } from "./ModalLayout";
   import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
   import WhatsAppIcon from "@mui/icons-material/WhatsApp";
@@ -278,45 +285,27 @@ export const LayoutsShopDetailCard= ({
       </Grid2>
     </ClickDetails>  
                                                               {/* second clickdetails */}
-    <ClickDetails                   
-    isOpen={isOpenRoom}
-    onClose={toggleUpdateModalRoom}
-    >
-    <Grid2 container spacing={2}>
-  {roomConsumerData?.map((room) => (
-    <React.Fragment key={room.id}>
-      <Grid2 xs={6}>
-        <TextField
-          label="Room Number"
-          variant="outlined"
-          
-          value={room.roomNo} // Value fetched from Firebase
-          slotProps={{
-            input: {
-              readOnly: true, // Make it read-only
-            },
-          }}
-          fullWidth
-        />
-      </Grid2>
-      <Grid2 xs={6}>
-        <TextField
-          label="Consumer Number"
-          variant="outlined"
-          value={room.consumerNo} // Value fetched from Firebase
-          slotProps={{
-            input: {
-              readOnly: true, // Make it read-only
-            },
-          }}
-          fullWidth
-        />
-      </Grid2>
-    </React.Fragment>
-  ))}
-</Grid2>
+                                                              <ClickDetails isOpen={isOpenRoom} onClose={toggleUpdateModalRoom}>
+  <TableContainer component="div">
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Room Number</TableCell>
+          <TableCell>Consumer Number</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {roomConsumerData?.map((room) => (
+          <TableRow key={room.id}>
+            <TableCell>{room.roomNo}</TableCell>
+            <TableCell>{room.consumerNo}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
+</ClickDetails>
 
-    </ClickDetails>
   </ShopDetailCardWrapper>
   );
 }

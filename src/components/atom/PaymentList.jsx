@@ -1,6 +1,5 @@
-import { Button, Grid2, Modal, TextField, Typography } from "@mui/material";
+import { Button, Grid2, Typography } from "@mui/material";
 import { PaidItem } from "./PaidItem";
-import styled from "@emotion/styled";
 import { useParams } from "react-router-dom";
 import { useShopPaymentsQuery } from "../../hooks/query/useShopPayments";
 import { useMemo, useState } from "react";
@@ -8,26 +7,26 @@ import { NewPaymentModal } from "./NewPaymentModal";
 import CircularLoader from "./CircularLoader";
 import { useShopDetailsQuery } from "../../hooks/query/useShopDetails";
 
-const PaymentListWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: "12px"
-}));
-const PaymentListContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: "12px"
-}));
-const PaymentListHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center"
-}));
-const PaymentListHeaderLabel = styled("div")(({ theme }) => ({
-  fontSize: "24px",
-  fontWeight: 500,
-  color: "#000000"
-}));
+// const PaymentListWrapper = styled("div")(({ theme }) => ({
+//   display: "flex",
+//   flexDirection: "column",
+//   gap: "12px"
+// }));
+// const PaymentListContainer = styled("div")(({ theme }) => ({
+//   display: "flex",
+//   flexDirection: "column",
+//   gap: "12px"
+// }));
+// const PaymentListHeader = styled("div")(({ theme }) => ({
+//   display: "flex",
+//   justifyContent: "space-between",
+//   alignItems: "center"
+// }));
+// const PaymentListHeaderLabel = styled("div")(({ theme }) => ({
+//   fontSize: "24px",
+//   fontWeight: 500,
+//   color: "#000000"
+// }));
 export const PaymentList = () => {
   const { shopId } = useParams();
   const [open, setOpen] = useState(false);
@@ -76,7 +75,7 @@ export const PaymentList = () => {
             variant="contained"
             onClick={toggleCreatePaymentModal}
           >
-            New +
+            Add +
           </Button>
         </Grid2>
       </Grid2>
