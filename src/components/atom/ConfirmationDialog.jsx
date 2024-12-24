@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 
-export const ConfirmationDialog = ({ open, onClose, onConfirm, title, content }) => {
+export const ConfirmationDialog = ({ open, onClose, onConfirm, title, content, isConfirming }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -12,8 +12,8 @@ export const ConfirmationDialog = ({ open, onClose, onConfirm, title, content })
         <Button onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={onConfirm} color="primary" autoFocus>
-          Confirm
+        <Button onClick={onConfirm} color="primary" autoFocus disabled={isConfirming}>
+          {isConfirming ? 'Confirming...' : 'Confirm'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -21,3 +21,4 @@ export const ConfirmationDialog = ({ open, onClose, onConfirm, title, content })
 };
 
 // export default ConfirmationDialog;
+

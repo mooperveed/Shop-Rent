@@ -1,6 +1,6 @@
 import { Box, Button, Modal } from "@mui/material";
 
-export const ModalLayout = ({ isOpen, onClose, onSubmit, children }) => {
+export const ModalLayout = ({ isOpen, onClose, onSubmit, children, isSubmitting }) => {
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box
@@ -28,11 +28,12 @@ export const ModalLayout = ({ isOpen, onClose, onSubmit, children }) => {
           <Button variant="outlined" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={onSubmit}>
-            Submit
+          <Button variant="contained" onClick={onSubmit} disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
         </Box>
       </Box>
     </Modal>
   );
 };
+

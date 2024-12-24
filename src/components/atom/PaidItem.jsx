@@ -55,6 +55,7 @@ const NoteAtPayment = styled("div")(({ theme }) => ({
 export const PaidItem = (props) => {
   const shopDetailsQuery = useShopDetailsQuery(props.shopId);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
@@ -143,7 +144,8 @@ export const PaidItem = (props) => {
   };
 
   const confirmDelete = async () => {
-    setIsDeleting(true);
+    if (isConfirming) return;
+    setIsConfirming(true);
     try {
       const result = await updateShopBalance(props.shopId, props.amount);
       if (result.success) {
@@ -159,7 +161,7 @@ export const PaidItem = (props) => {
       console.error("Failed to delete payment:", error.message);
       setShowErrorDialog(true);
     } finally {
-      setIsDeleting(false);
+      setIsConfirming(false);
       setShowConfirmDialog(false);
     }
   };
@@ -348,6 +350,7 @@ export const PaidItem = (props) => {
         onConfirm={confirmDelete}
         title="Confirm Deletion"
         content="Are you sure you want to delete this payment?"
+        isConfirming={isConfirming}
       />
 
       <ErrorDialog

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Grid2, Modal, TextField } from "@mui/material";
 import { useCreatePaymentMutation } from "../../hooks/mutation/useCreatePayment";
 import { useParams } from "react-router-dom";
@@ -9,6 +9,7 @@ export const NewPaymentModal = (props) => {
   // console.log(shopId);
   const [amount, setAmount] = React.useState(0);
   const [noteAtPayment, setNoteAtPayment] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const createPaymentMutation = useCreatePaymentMutation(props.onSuccess);
 
   const handleAmountChange = (event) => {
@@ -19,6 +20,7 @@ export const NewPaymentModal = (props) => {
    
   };
   const handleSubmitAmount = () => {
+    setIsSubmitting(true);
     createPaymentMutation.mutate({
       shopId,
       amount,
@@ -31,6 +33,7 @@ export const NewPaymentModal = (props) => {
       isOpen={props.open}
       onClose={props.onClose}
       onSubmit={handleSubmitAmount}
+      isSubmitting={isSubmitting}
       sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
     >
       <Grid2 container spacing={2}>
@@ -61,3 +64,4 @@ export const NewPaymentModal = (props) => {
     </ModalLayout>
   );
 };
+
