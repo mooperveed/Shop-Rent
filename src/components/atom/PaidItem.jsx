@@ -1,20 +1,20 @@
 import React, { useState }  from "react";
 import styled from "@emotion/styled";
 import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
-import { Grid2, IconButton,CircularProgress } from "@mui/material";
+import { Grid2, IconButton, CircularProgress } from "@mui/material";
 import SystemUpdateAltOutlinedIcon from "@mui/icons-material/SystemUpdateAltOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
-import { getDoc, doc, updateDoc,runTransaction} from "@firebase/firestore";
+import { getDoc, doc, updateDoc, runTransaction } from "@firebase/firestore";
 import { db } from "../../libs/db";
 import { COLLECTION } from "../../constants/db";
 import { library, icon } from '@fortawesome/fontawesome-svg-core';
-import { faStore, faMoneyBillWave, faReceipt, faCalendarAlt,faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faStore, faMoneyBillWave, faReceipt, faCalendarAlt, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { deletePayment } from "../../service/firestoreService";
 import { useShopDetailsQuery } from "../../hooks/query/useShopDetails";
-
-
+import {ConfirmationDialog} from './ConfirmationDialog';
+import {ErrorDialog} from './ErrorDialog';
 
 // Add FontAwesome icons to the library
 library.add(faStore, faMoneyBillWave, faReceipt, faCalendarAlt);
@@ -30,35 +30,18 @@ const PaidItemWrapper = styled(Grid2)(({ theme }) => ({
     padding: "16px"
   }
 }));
-// const PaidItemLeftCol = styled("div")(({ theme }) => ({
-//   display: "flex",
-//   flexDirection: "column"
-// }));
+
 const PaidAmount = styled("div")(({ theme }) => ({
   fontSize: "24px",
   fontWeight: 500,
   color: "#000000"
 }));
+
 const PaidDate = styled("div")(({ theme }) => ({
   fontSize: "12px",
   fontWeight: 500,
   color: "#000000"
 }));
-// const PaidItemRightCol = styled("div")(({ theme }) => ({
-//   display: "flex",
-//   flexDirection: "column",
-//   gap: "8px"
-// }));
-// const PaidCurrentBalance = styled("div")(({ theme }) => ({
-//   fontSize: "16px",
-//   fontWeight: 500,
-//   color: "#000000"
-// }));
-// const PaidPreviousBalance = styled("div")(({ theme }) => ({
-//   fontSize: "16px",
-//   fontWeight: 500,
-//   color: "#000000"
-// }));
 
 const NoteAtPayment = styled("div")(({ theme }) => ({
   fontSize: "14px",
@@ -72,9 +55,12 @@ const NoteAtPayment = styled("div")(({ theme }) => ({
 export const PaidItem = (props) => {
   const shopDetailsQuery = useShopDetailsQuery(props.shopId);
   const [isDeleting, setIsDeleting] = useState(false);
-   console.log("props ",props);
- 
-   const updateShopBalance = async (shopId, amount) => {
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+
+  console.log("props ", props);
+
+  const updateShopBalance = async (shopId, amount) => {
     try {
       await runTransaction(db, async (transaction) => {
         const shopRef = doc(db, COLLECTION.SHOPS, shopId);
@@ -85,7 +71,7 @@ export const PaidItem = (props) => {
         }
 
         const shopData = shopSnap.data();
-        let { credit, taxBalance, currentBalance, roomRent } = shopData;
+        let { credit, taxBalance, currentBalance, roomRent, lastPaymentCount } = shopData;
 
         // Subtract from credit first
         if (credit >= amount) {
@@ -118,11 +104,13 @@ export const PaidItem = (props) => {
         const newCredit = currentBalance % roomRent;
         currentBalance -= newCredit;
         credit += newCredit;
+        lastPaymentCount--;
 
         transaction.update(shopRef, {
           credit,
           taxBalance,
-          currentBalance
+          currentBalance,
+          lastPaymentCount
         });
       });
 
@@ -134,8 +122,27 @@ export const PaidItem = (props) => {
   };
 
   const handleDelete = async () => {
-    if (isDeleting) return; // Prevent multiple clicks
+    if (isDeleting) return;
 
+    setIsDeleting(true);
+    try {
+      const shopDoc = await getDoc(doc(db, COLLECTION.SHOPS, props.shopId));
+      const shopData = shopDoc.data();
+
+      if (shopData.lastPaymentCount === props.lastPaymentCount) {
+        setShowConfirmDialog(true);
+      } else {
+        setShowErrorDialog(true);
+      }
+    } catch (error) {
+      console.error("Failed to check payment status:", error.message);
+      setShowErrorDialog(true);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const confirmDelete = async () => {
     setIsDeleting(true);
     try {
       const result = await updateShopBalance(props.shopId, props.amount);
@@ -146,20 +153,17 @@ export const PaidItem = (props) => {
         console.log(`Payment with ID ${props.paymentId} deleted successfully.`);
       } else {
         console.error("Failed to update shop balance:", result.message);
-        // Revert optimistic update here if needed
+        setShowErrorDialog(true);
       }
     } catch (error) {
       console.error("Failed to delete payment:", error.message);
-      // Revert optimistic update here if needed
+      setShowErrorDialog(true);
     } finally {
       setIsDeleting(false);
+      setShowConfirmDialog(false);
     }
   };
 
-
-  
-
- 
   const generateReceipt = async (receiptDetails) => {
     const {
       id: paymentId,
@@ -182,10 +186,6 @@ export const PaidItem = (props) => {
   
     // Convert Firebase timestamp to readable date
     const paidDate = new Date(createdAt.seconds * 1000).toLocaleDateString();
-  
-    // // Add background image with low opacity
-    // const backgroundImageUrl = 'https://example.com/path/to/your/background-image.jpg'; // Replace with your image URL
-    // pdfDoc.addImage(backgroundImageUrl, 'JPEG', 0, 0, 210, 297, '', 'FAST', 0.1);
   
     // Styles
     const lineSpacing = 15;
@@ -251,11 +251,10 @@ export const PaidItem = (props) => {
       pdfDoc.setFont(undefined, 'normal');
       pdfDoc.setTextColor(0, 0, 0); // Reset to black
       pdfDoc.text(`${monthsDue} month${monthsDue > 1 ? "s" : ""} due`, textX + 30, startY + 4 * lineSpacing);
-
     }
     console.log("fullyPaidRent "+isFullyPaidRent,monthsDue);
 
-    // Months Due (only if isFullyPaidRent is false)
+    // Tax Due (only if isFullyPaidTax is false)
     if (!isFullyPaidTax && taxDue) {
       const exclamationIcon = icon(faExclamationCircle).html[0];
       pdfDoc.addSvgAsImage(exclamationIcon, 20, startY + 5 * lineSpacing - 5, iconSize, iconSize, { color: [231, 76, 60] }); // Red color for attention
@@ -265,9 +264,9 @@ export const PaidItem = (props) => {
       pdfDoc.setFont(undefined, 'normal');
       pdfDoc.setTextColor(0, 0, 0); // Reset to black
       pdfDoc.text(`${taxDue} month${taxDue > 1 ? "s" : ""} due`, textX + 30, startY + 5 * lineSpacing);
-
     }
     console.log("fullyPaidTax "+isFullyPaidTax,taxDue);
+
     if (!isFullyPaidTax || !isFullyPaidRent) {
       const exclamationIcon = icon(faExclamationCircle).html[0];
       pdfDoc.addSvgAsImage(exclamationIcon, 20, startY + 6 * lineSpacing - 5, iconSize, iconSize, { color: [46, 204, 113] }); // Green color for attention
@@ -296,52 +295,70 @@ export const PaidItem = (props) => {
   };
 
   return (
-    <PaidItemWrapper
-      size={{ xs: 12 }}
-      container
-      justifyContent={"space-between"}
-    >
-      <Grid2>
-        <PaidAmount>{props.amount}</PaidAmount>
-        <PaidDate>Paid on {formatTimestampToDate(props.createdAt)}</PaidDate>
-      </Grid2>
-      <Grid2>
-      {props.noteAtPayment && (
-          <NoteAtPayment>Note: {props.noteAtPayment}</NoteAtPayment>
-        )}
-     </Grid2>
-      <Grid2 container spacing={1} alignItems={"center"}>
+    <>
+      <PaidItemWrapper
+        size={{ xs: 12 }}
+        container
+        justifyContent={"space-between"}
+      >
         <Grid2>
-  <IconButton 
-    size="small" 
-    variant="contained" 
-    onClick={async () => {
-      try {
-        const receiptDetails = await props; // Fetch from Firebase
-        console.log("props value:", props.monthsDue);
-        generateReceipt(receiptDetails); // Generate and download the receipt
-        // console.log("props  "+props.createdAt);
-      } catch (error) {
-        console.error("Failed to generate receipt:", error.message);
-      }
-    }}
-  >
-    <SystemUpdateAltOutlinedIcon />
-  </IconButton>
-</Grid2>
-
-     <Grid2>
-          <IconButton 
-            size="small" 
-            variant="contained" 
-            color="error"
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
-            {isDeleting ? <CircularProgress size={24} /> : <DeleteIcon />}
-          </IconButton>
+          <PaidAmount>{props.amount}</PaidAmount>
+          <PaidDate>Paid on {formatTimestampToDate(props.createdAt)}</PaidDate>
         </Grid2>
-      </Grid2>
-    </PaidItemWrapper>
+        <Grid2>
+          {props.noteAtPayment && (
+            <NoteAtPayment>Note: {props.noteAtPayment}</NoteAtPayment>
+          )}
+        </Grid2>
+        <Grid2 container spacing={1} alignItems={"center"}>
+          <Grid2>
+            <IconButton 
+              size="small" 
+              variant="contained" 
+              onClick={async () => {
+                try {
+                  const receiptDetails = await props;
+                  console.log("props value:", props.monthsDue);
+                  generateReceipt(receiptDetails);
+                } catch (error) {
+                  console.error("Failed to generate receipt:", error.message);
+                }
+              }}
+            >
+              <SystemUpdateAltOutlinedIcon />
+            </IconButton>
+          </Grid2>
+          <Grid2>
+            <IconButton 
+              size="small" 
+              variant="contained" 
+              color="error"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? <CircularProgress size={24} /> : <DeleteIcon />}
+            </IconButton>
+          </Grid2>
+        </Grid2>
+      </PaidItemWrapper>
+
+      <ConfirmationDialog
+        open={showConfirmDialog}
+        onClose={() => setShowConfirmDialog(false)}
+        onConfirm={confirmDelete}
+        title="Confirm Deletion"
+        content="Are you sure you want to delete this payment?"
+      />
+
+      <ErrorDialog
+        open={showErrorDialog}
+        onClose={() => setShowErrorDialog(false)}
+        title="Cannot Delete Payment"
+        content="This payment cannot be deleted as it is not the most recent payment for this shop."
+      />
+    </>
   );
 };
+
+export default PaidItem;
+

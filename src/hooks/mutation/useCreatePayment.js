@@ -24,6 +24,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
       const taxBalance = Number(shopSnapshot.data().taxBalance);
       const creditedBalance = Number(shopSnapshot.data().credit);
       const paymentAmount=creditedBalance +Number(data.amount);
+      let lastPaymentCount=shopSnapshot.data().lastPaymentCount;
       let taxAmount=0,rentAmount=0,tempAmount=0,credit=0;
      
       if((maxAmount-paymentAmount)<0){
@@ -43,8 +44,9 @@ export const useCreatePaymentMutation = (onSuccess) => {
 
     const updatedBalanceRent = Number(currentBalance)+Number(rentAmount);
     const updatedBalanceTax = Number(taxBalance)+Number(taxAmount);
+    const updatedLastPaymentCount=lastPaymentCount+1;
     const updatedCredited = credit;
-      await updateShop(shopSnapshot.id, { currentBalance: updatedBalanceRent,credit:updatedCredited,taxBalance:updatedBalanceTax });
+      await updateShop(shopSnapshot.id, { currentBalance: updatedBalanceRent,credit:updatedCredited,taxBalance:updatedBalanceTax,lastPaymentCount:updatedLastPaymentCount });
       const paymentData = {
         amount:data.amount,
         shopId: data.shopId,
@@ -58,6 +60,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
         taxDue:rentStatus.taxDue,
         isFullyPaidRent:rentStatus.isFullyPaidRent,
         isFullyPaidTax:rentStatus.isFullyPaidTax,
+        lastPaymentCount:updatedLastPaymentCount,
       };
       return addNewPayment(paymentData);
     },
