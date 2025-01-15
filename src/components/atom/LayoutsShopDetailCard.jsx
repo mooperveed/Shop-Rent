@@ -299,6 +299,7 @@ export const LayoutsShopDetailCard= ({
           <TableRow key={room.id}>
             <TableCell>{room.roomNo}</TableCell>
             <TableCell>{room.consumerNo}</TableCell>
+            <TableCell>{room.rentAmount}</TableCell>
           </TableRow>
         ))}
       </TableBody>
