@@ -13,50 +13,51 @@ const getMonthName = (monthIndex) => {
 
 
 
-const fetchAndPreparePayments = async () => {
+  const fetchAndPreparePayments = async () => {
     const snapshot = await getPayments();
     const data = [];
   
-    // Create an array of promises to fetch the shopName for each payment
     const promises = snapshot.docs.map(async (paymentDoc) => {
       const payment = paymentDoc.data();
-      const shopIdRef = payment.shopId; // shopId reference
+      const shopIdRef = payment.shopId;
   
       let shopName = "N/A";
+      let shopOwner = "N/A";
   
-      // Fetch the shop name using the getShopById function
+      // Fetch shop details
       if (shopIdRef) {
-        const shopDoc = await getShopById(shopIdRef.id); // getShopById expects the shop ID
+        const shopDoc = await getShopById(shopIdRef.id);
         if (shopDoc.exists()) {
-          shopName = shopDoc.data().shopName || "N/A"; // Assuming 'name' contains the shopName
+          shopName = shopDoc.data().shopName || "N/A";
+          shopOwner = shopDoc.data().ownerName || "N/A";
         }
       }
   
       // Convert Firebase createdAt timestamp to JavaScript Date
       const paidDate = new Date(payment.createdAt.seconds * 1000);
-      const month = paidDate.getMonth(); // 0 = January, 1 = February, ..., 11 = December
-      const year = paidDate.getFullYear(); // Extract the year
+      const formattedDate = `${paidDate.getDate().toString().padStart(2, '0')}-${(paidDate.getMonth() + 1).toString().padStart(2, '0')}-${paidDate.getFullYear()}`;
+      const monthYear = `${getMonthName(paidDate.getMonth())} ${paidDate.getFullYear()}`;
   
-      // Initialize a row with PaymentID, ShopName, AmountPaid
+      // Create a row with detailed fields
       const row = {
         PaymentID: paymentDoc.id,
-        ShopName: shopName, // Use the fetched shopName
-        AmountPaid: payment.amount || 0, // Use 'amount' instead of 'amountPaid'
+        ShopName: shopName,
+        ShopOwner: shopOwner,
+        AmountPaid: payment.amount || 0,
+        MonthsDue: payment.monthsDue || 0,
+        PaidDate: formattedDate, // Detailed date
+        MonthYear: monthYear, // Grouping month-year
       };
   
-      // Generate Month Year as keys dynamically
-      const monthYearKey = `${getMonthName(month)} ${year}`;
-      row[monthYearKey] = "✔";
-  
-      // Push the row to the data array
       data.push(row);
     });
   
-    // Wait for all the promises to resolve
+    // Wait for all promises
     await Promise.all(promises);
   
     return data;
   };
+  
   
   
   
