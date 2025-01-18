@@ -6,7 +6,6 @@ import { ModalLayout } from "./ModalLayout";
 
 export const NewPaymentModal = (props) => {
   const { shopId } = useParams();
-  // console.log(shopId);
   const [amount, setAmount] = React.useState(0);
   const [noteAtPayment, setNoteAtPayment] = React.useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

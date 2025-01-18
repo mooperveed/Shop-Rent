@@ -17,7 +17,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
       // Fetch shop details
       const shopSnapshot = await getShopById(data.shopId);
       const shopData = shopSnapshot.data();
-      const monthlyRent = shopData.roomRent;
+      const monthlyRent = shopData.shopRent;
 
       // Calculate initial values
       const currentBalance = Number(shopData.currentBalance);
@@ -52,7 +52,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
         taxAmount = maxTaxAmount;
         credit = tempAmount - taxAmount;
       } else {
-        credit = taxAmountMonth > 0 ? tempAmount % taxAmountMonth : tempAmount;
+        credit = taxAmountMonth > 0 ? tempAmount % taxAmountMonth : tempAmount;        
 
         taxAmount = tempAmount - credit;
       }
@@ -76,7 +76,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
       const updatedShopData = updatedShopSnapshot.data();
       const updatedRentStatus = calculateRentTaxStatus(
         updatedShopData.startDate,
-        updatedShopData.roomRent,
+        updatedShopData.shopRent,
         updatedShopData.currentBalance,
         updatedShopData.taxRate,
         updatedShopData.taxBalance

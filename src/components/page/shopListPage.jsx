@@ -34,14 +34,14 @@ export default function ShopListPage(props) {
   const [keyword, setKeyword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const shopListQuery = useShopListQuery();
-  const [shopField, setShopField] = useState({
-    shopName: "",
-    ownerName: "",
-    roomNo: 0,
-    roomRent: 0,
-    ownerAddress: "",
-    startDate: dayjs(new Date())
-  });
+  // const [shopField, setShopField] = useState({
+  //   shopName: "",
+  //   ownerName: "",
+  //   roomNo: 0,
+  //   shopRent: 0,
+  //   ownerAddress: "",
+  //   startDate: dayjs(new Date())
+  // });
   const isLoading = shopListQuery.isLoading;
   const shops = useMemo(() => {
     if (!shopListQuery.data) return [];
@@ -54,12 +54,11 @@ export default function ShopListPage(props) {
         id: shop.id,
         name: shop.shopName,
         number: shop.roomCount,
-        price: shop.roomRent,
-        address: shop.ownerAddress,
+        price: shop.shopRent,
         status: getRentStatusColorAndText(
           calculateRentTaxStatus(
             shop.startDate,
-            shop.roomRent,
+            shop.shopRent,
             
             shop.currentBalance,
             shop.taxRate,
@@ -79,22 +78,22 @@ export default function ShopListPage(props) {
     toggleCreateShopModal();
   };
 
-  const handleCreateShop = () => {
-    createShopMutation.mutate(
-      {
-        ...shopField,
-        startDate: Timestamp.fromDate(shopField.startDate.toDate())
-      },
-      {}
-    );
-  };
+  // const handleCreateShop = () => {
+  //   createShopMutation.mutate(
+  //     {
+  //       ...shopField,
+  //       startDate: Timestamp.fromDate(shopField.startDate.toDate())
+  //     },
+  //     {}
+  //   );
+  // };
 
   const createShopMutation = useCreateShopMutation(handleCreateShopSuccess);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setShopField((prev) => ({ ...prev, [name]: value }));
-  };
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setShopField((prev) => ({ ...prev, [name]: value }));
+  // };
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -156,7 +155,7 @@ export default function ShopListPage(props) {
         />
         <ShopList shops={shops} isLoading={isLoading} />
       </ShopPageWrapper>
-      <ModalLayout
+      {/* <ModalLayout
         isOpen={isModalOpen}
         onClose={toggleCreateShopModal}
         onSubmit={handleCreateShop}
@@ -199,10 +198,10 @@ export default function ShopListPage(props) {
             <TextField
               label="Shop Rent"
               variant="outlined"
-              name="roomRent"
+              name="shopRent"
               placeholder="Enter Shop Rent"
               fullWidth
-              value={shopField.roomRent}
+              value={shopField.shopRent}
               onChange={handleInputChange}
             />
           </Grid2>
@@ -244,7 +243,7 @@ export default function ShopListPage(props) {
             </LocalizationProvider>
           </Grid2>
         </Grid2>
-      </ModalLayout>
+      </ModalLayout> */}
     </ShopPageLayout>
   );
 }

@@ -98,7 +98,7 @@ export const ShopDetailCard = () => {
     shopName: "",
     ownerName: "",
     roomNo: 0,
-    roomRent: 0,
+    shopRent: 0,
     ownerAddress: "",
     startingBalance: 0,
     startDate: dayjs(new Date())
@@ -143,7 +143,7 @@ export const ShopDetailCard = () => {
         ShopName: shopDeatilsQuery.data.shopName,
         ownerName: shopDeatilsQuery.data.ownerName,
         roomNo: shopDeatilsQuery.data.roomNo,
-        shopRent: shopDeatilsQuery.data.roomRent,
+        shopRent: shopDeatilsQuery.data.shopRent,
         ownerAddress: shopDeatilsQuery.data.ownerAddress,
         startingBalance: shopDeatilsQuery.data.startingBalance,
         startDate: dayjs(

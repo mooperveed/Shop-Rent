@@ -86,7 +86,7 @@ export const LayoutsShopDetailCard= ({
             {...getRentStatusColorAndText(
               calculateRentTaxStatus(
                 shopDeatilsQuery.data.startDate,
-                shopDeatilsQuery.data.roomRent,
+                shopDeatilsQuery.data.shopRent,
                 shopDeatilsQuery.data.currentBalance,
                 shopDeatilsQuery.data.taxRate,
                 shopDeatilsQuery.data.taxBalance,
@@ -111,12 +111,12 @@ export const LayoutsShopDetailCard= ({
       <Grid2 size={{ xs: 6 }}>
         <LabeledField label={"Room count"} >
           <RoomCount onClick={toggleOpenRoom} style={{ cursor: "pointer", color: "blue" }}
-          >{shopDeatilsQuery.data.roomNo}</RoomCount>
+          >{shopDeatilsQuery.data.noOfRooms}</RoomCount>
         </LabeledField>
       </Grid2>
       <Grid2 size={{ xs: 6 }}>
         <LabeledField label={"Rent"}>
-          <ShopRentAmount >{shopDeatilsQuery.data.roomRent}</ShopRentAmount>      {/*{ //in firebase roomRent.I want to change to shopRent. for changing here}*/} 
+          <ShopRentAmount >{shopDeatilsQuery.data.shopRent}</ShopRentAmount>      {/*{ //in firebase shopRent.I want to change to shopRent. for changing here}*/} 
         </LabeledField>  
       </Grid2>
       <Grid2 size={{ xs: 6 }}>
@@ -196,10 +196,10 @@ export const LayoutsShopDetailCard= ({
       <TextField
         label="No Rooms"
         variant="outlined"
-        name="roomNo"
+        name="noOfRooms"
         placeholder="Enter No of rooms"
         fullWidth
-        value={shopField.roomNo}
+        value={shopField.noOfRooms}
         onChange={handleInputChange}
       />
     </Grid2>
@@ -210,7 +210,7 @@ export const LayoutsShopDetailCard= ({
         name="shopRent"
         placeholder="Enter Shop Rent"
         fullWidth
-        value={shopField.roomRent}  //in firebase roomRent.I want to change to shopRent. for changing here
+        value={shopField.shopRent}  //in firebase shopRent.I want to change to shopRent. for changing here
         onChange={handleInputChange}
       />
     </Grid2>
@@ -266,7 +266,7 @@ export const LayoutsShopDetailCard= ({
             {...getTaxStatusColorAndText(
               calculateRentTaxStatus(
                 shopDeatilsQuery.data.startDate,
-                shopDeatilsQuery.data.roomRent,
+                shopDeatilsQuery.data.shopRent,
                 shopDeatilsQuery.data.currentBalance,
                 shopDeatilsQuery.data.taxRate,
                 shopDeatilsQuery.data.taxBalance,
@@ -299,7 +299,7 @@ export const LayoutsShopDetailCard= ({
           <TableRow key={room.id}>
             <TableCell>{room.roomNo}</TableCell>
             <TableCell>{room.consumerNo}</TableCell>
-            <TableCell>{room.rentAmount}</TableCell>
+            <TableCell>{room.roomRent}</TableCell>
           </TableRow>
         ))}
       </TableBody>

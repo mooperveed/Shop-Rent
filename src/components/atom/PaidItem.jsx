@@ -72,7 +72,7 @@ export const PaidItem = (props) => {
         }
 
         const shopData = shopSnap.data();
-        let { credit, taxBalance, currentBalance, roomRent, lastPaymentCount } = shopData;
+        let { credit, taxBalance, currentBalance, shopRent, lastPaymentCount } = shopData;
 
         // Subtract from credit first
         if (credit >= amount) {
@@ -102,7 +102,7 @@ export const PaidItem = (props) => {
         }
 
         // Recalculate credit based on remaining balance
-        const newCredit = currentBalance % roomRent;
+        const newCredit = currentBalance % shopRent;
         currentBalance -= newCredit;
         credit += newCredit;
         lastPaymentCount--;

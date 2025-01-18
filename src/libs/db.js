@@ -3,13 +3,15 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBVUxfx_QtLPzlV2n9cu_t2bFC1aaPWLao",
-  authDomain: "todo-app-95485.firebaseapp.com",
-  projectId: "todo-app-95485",
-  storageBucket: "todo-app-95485.firebasestorage.app",
-  messagingSenderId: "888414820480",
-  appId: "1:888414820480:web:036067527696edaf6a2e65"
+  apiKey: "AIzaSyAjZbOY7wdOc58l7Mdeyil9aIhanmm8vVo",
+  authDomain: "shop-rent-36261.firebaseapp.com",
+  projectId: "shop-rent-36261",
+  storageBucket: "shop-rent-36261.firebasestorage.app",
+  messagingSenderId: "259093832147",
+  appId: "1:259093832147:web:662d368d3fbf14a7d18f26",
+  measurementId: "G-MMQNV35FCY"
 };
 
 const app = initializeApp(firebaseConfig);
