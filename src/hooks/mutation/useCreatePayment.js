@@ -36,6 +36,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
         shopData.taxRate,
         shopData.taxBalance
       );
+      console.log("month due",rentStatus.monthsDue);
       const maxTaxAmount = Number(rentStatus.taxDue) * taxAmountMonth;
       const maxAmount = Number(monthlyRent) * rentStatus.monthsDue;
 
@@ -51,7 +52,8 @@ export const useCreatePaymentMutation = (onSuccess) => {
         taxAmount = maxTaxAmount;
         credit = tempAmount - taxAmount;
       } else {
-        credit = tempAmount % taxAmountMonth;
+        credit = taxAmountMonth > 0 ? tempAmount % taxAmountMonth : tempAmount;
+
         taxAmount = tempAmount - credit;
       }
 
@@ -79,6 +81,7 @@ export const useCreatePaymentMutation = (onSuccess) => {
         updatedShopData.taxRate,
         updatedShopData.taxBalance
       );
+      console.log("updated rent status",updatedRentStatus);
 
       // Create payment data using recalculated rent status
       const paymentData = {

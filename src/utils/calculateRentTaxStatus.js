@@ -5,52 +5,57 @@ export function calculateRentTaxStatus(
   taxRate,
   taxBalance
 ) {
-  console.log(currentBalance,monthlyRent,startingDate,taxRate,taxBalance);
+  console.log(
+    "check",
+    currentBalance,
+    monthlyRent,
+    startingDate,
+    taxRate,
+    taxBalance
+  );
   if (
     !startingDate || // Assuming startingDate should still be validated for falsy values
     isNaN(monthlyRent) ||
-    isNaN(currentBalance)||
-    isNaN(taxRate)||
+    isNaN(currentBalance) ||
+    isNaN(taxRate) ||
     isNaN(taxBalance)
   ) {
     return null;
   }
-  
-  //  Convert Firebase Timestamp to JavaScript Date
+
+  // Convert Firebase Timestamp to JavaScript Date
   const startDate = startingDate.toDate();
   const currentDate = new Date();
 
-  const taxAmount=monthlyRent*(taxRate/100);
+  // If taxRate is 0, skip tax calculations
+  const taxAmount = taxRate > 0 ? monthlyRent * (taxRate / 100) : 0;
 
-  //  Calculate the total number of months since the starting date
+  // Calculate the total number of months since the starting date
   const totalMonthsElapsed =
     (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
     (currentDate.getMonth() - startDate.getMonth());
 
-
-
-  //  Calculate the total rent due for the months that have passed
+  // Calculate the total rent due for the months that have passed
   const totalRentDue = Number(totalMonthsElapsed) * Number(monthlyRent);
-  const totalTaxDue=  Number(totalMonthsElapsed) *Number(taxAmount);
+  const totalTaxDue = taxRate > 0 ? Number(totalMonthsElapsed) * Number(taxAmount) : 0;
 
-  console.log("tax amount "+taxAmount);
-  console.log("total months  elapsed "+totalMonthsElapsed );
-  console.log("total tax due "+totalTaxDue );
+  console.log("tax amount " + taxAmount);
+  console.log("total months elapsed " + totalMonthsElapsed);
+  console.log("total tax due " + totalTaxDue);
 
-
-  //  Calculate the total payments made
+  // Calculate the total payments made
   const totalPaidRent = currentBalance;
-  const totalPaidTax=taxBalance;
-  console.log("total paid tax "+totalPaidTax);
-  console.log("totalRentDue"+totalRentDue);
-  console.log("totalPaidRent"+totalPaidRent);
+  const totalPaidTax = taxBalance;
+  console.log("total paid tax " + totalPaidTax);
+  console.log("totalRentDue " + totalRentDue);
+  console.log("totalPaidRent " + totalPaidRent);
 
   // Determine rent status based on monthly dues
   const rentStatus = {
     isFullyPaidRent: totalPaidRent >= totalRentDue,
-    isFullyPaidTax:totalPaidTax>=totalTaxDue,
+    isFullyPaidTax: taxRate === 0 || totalPaidTax >= totalTaxDue,
     monthsDue: 0,
-   taxDue:0,
+    taxDue: 0,
   };
 
   if (!rentStatus.isFullyPaidRent) {
@@ -59,12 +64,13 @@ export function calculateRentTaxStatus(
     // Calculate months due based on remaining balance
     rentStatus.monthsDue = Number(Math.floor(pendingRentAmount / monthlyRent));
   }
-  if (!rentStatus.isFullyPaidTax) {
+
+  if (taxRate > 0 && !rentStatus.isFullyPaidTax) {
     const pendingTaxAmount = totalTaxDue - totalPaidTax;
     rentStatus.taxDue = Number(Math.floor(pendingTaxAmount / taxAmount));
   }
-  console.log(" taxDue is  "+rentStatus.taxDue);
-  // if(rentStatus.monthsDue===0)rentStatus.isFullyPaidRent=true;
+
+  console.log("taxDue is " + rentStatus.taxDue);
   return rentStatus;
 }
 
@@ -80,7 +86,6 @@ export function getRentStatusColorAndText(rentStatus) {
 }
 
 export function getTaxStatusColorAndText(rentStatus) {
-
   if (!rentStatus) return { label: "N/A" };
   if (rentStatus.isFullyPaidTax) {
     return { color: "success", label: "Tax Fully Paid" };
