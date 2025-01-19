@@ -19,7 +19,6 @@ export const useShopListQuery = () => {
       return shopsList;
     },
     onSuccess: (data) => {
-      console.log(QueryId, data);
     },
     refetchOnWindowFocus: false
   });

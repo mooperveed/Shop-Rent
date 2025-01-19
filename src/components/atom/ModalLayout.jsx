@@ -15,7 +15,7 @@ export const ModalLayout = ({ isOpen, onClose, onSubmit, children, isSubmitting 
           boxShadow: 24,
           p: 4
         }}
-      >~
+      >
         {children}
         <Box
           sx={{
