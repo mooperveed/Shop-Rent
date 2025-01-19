@@ -25,12 +25,6 @@ const LoginPage = () => {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // if (!userCredential.user.emailVerified) {
-      //   setError('Please verify your email before logging in.');
-      //   console.log("error is "+ userCredential.user.emailVerified);
-      //   return;
-      // }
-
       setMessage('Logged in successfully!');
     } catch (error) {console.log("error is "+ error.code);
       switch (error.code) {

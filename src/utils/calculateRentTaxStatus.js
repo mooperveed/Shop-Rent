@@ -5,14 +5,6 @@ export function calculateRentTaxStatus(
   taxRate,
   taxBalance
 ) {
-  console.log(
-    "check",
-    currentBalance,
-    monthlyRent,
-    startingDate,
-    taxRate,
-    taxBalance
-  );
   if (
     !startingDate || // Assuming startingDate should still be validated for falsy values
     isNaN(monthlyRent) ||
@@ -39,16 +31,10 @@ export function calculateRentTaxStatus(
   const totalRentDue = Number(totalMonthsElapsed) * Number(monthlyRent);
   const totalTaxDue = taxRate > 0 ? Number(totalMonthsElapsed) * Number(taxAmount) : 0;
 
-  console.log("tax amount " + taxAmount);
-  console.log("total months elapsed " + totalMonthsElapsed);
-  console.log("total tax due " + totalTaxDue);
 
   // Calculate the total payments made
   const totalPaidRent = currentBalance;
   const totalPaidTax = taxBalance;
-  console.log("total paid tax " + totalPaidTax);
-  console.log("totalRentDue " + totalRentDue);
-  console.log("totalPaidRent " + totalPaidRent);
 
   // Determine rent status based on monthly dues
   const rentStatus = {
@@ -69,8 +55,6 @@ export function calculateRentTaxStatus(
     const pendingTaxAmount = totalTaxDue - totalPaidTax;
     rentStatus.taxDue = Number(Math.floor(pendingTaxAmount / taxAmount));
   }
-
-  console.log("taxDue is " + rentStatus.taxDue);
   return rentStatus;
 }
 

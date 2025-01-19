@@ -34,6 +34,7 @@ export default function ShopListPage(props) {
   const [keyword, setKeyword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const shopListQuery = useShopListQuery();
+   //for shop adding
   // const [shopField, setShopField] = useState({
   //   shopName: "",
   //   ownerName: "",
@@ -78,6 +79,7 @@ export default function ShopListPage(props) {
     toggleCreateShopModal();
   };
 
+   //for shop adding
   // const handleCreateShop = () => {
   //   createShopMutation.mutate(
   //     {
@@ -90,6 +92,7 @@ export default function ShopListPage(props) {
 
   const createShopMutation = useCreateShopMutation(handleCreateShopSuccess);
 
+  //for shop adding
   // const handleInputChange = (e) => {
   //   const { name, value } = e.target;
   //   setShopField((prev) => ({ ...prev, [name]: value }));
@@ -126,7 +129,9 @@ export default function ShopListPage(props) {
                 Sign Out
               </Button>
             </Grid2>
-            {/* <Grid2>
+            { 
+            /*   for adding shop
+             <Grid2>
               <IconButton
                 size={"small"}
                 variant="contained"
@@ -155,6 +160,7 @@ export default function ShopListPage(props) {
         />
         <ShopList shops={shops} isLoading={isLoading} />
       </ShopPageWrapper>
+      {/* for adding shop */}
       {/* <ModalLayout
         isOpen={isModalOpen}
         onClose={toggleCreateShopModal}

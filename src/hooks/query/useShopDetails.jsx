@@ -1,8 +1,6 @@
 import { useQuery } from "react-query";
 import {
-  getRoomById,
   getShopById,
-  getTenantById
 } from "../../service/firestoreService";
 
 const QueryId = "shopDetails";

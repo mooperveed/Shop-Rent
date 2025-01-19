@@ -17,4 +17,4 @@ export const ErrorDialog = ({ open, onClose, title, content }) => {
   );
 };
 
-// export default ErrorDialog;
+

@@ -164,6 +164,8 @@ export const LayoutsShopDetailCard= ({
    
     </Grid2>
   
+    {/* 
+        for adding shop
     <ModalLayout
   isOpen={isOpen}
   onClose={toggleUpdateModal}
@@ -250,7 +252,7 @@ export const LayoutsShopDetailCard= ({
       />
     </Grid2>
   </Grid2>
-</ModalLayout>
+</ModalLayout> */}
 
 
     <ClickDetails
@@ -285,7 +287,7 @@ export const LayoutsShopDetailCard= ({
       </Grid2>
     </ClickDetails>  
                                                               {/* second clickdetails */}
-                                                              <ClickDetails isOpen={isOpenRoom} onClose={toggleUpdateModalRoom}>
+<ClickDetails isOpen={isOpenRoom} onClose={toggleUpdateModalRoom}>
   <TableContainer component="div">
     <Table>
       <TableHead>

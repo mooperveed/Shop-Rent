@@ -10,9 +10,6 @@ import {
   Grid2
 } from "@mui/material";
 import { useShopPaymentsQuery } from "../../hooks/query/useShopPayments";
-
-// import { Label } from "@mui/icons-material";
-// import { Timestamp } from "@firebase/firestore";
 import { formatTimestampToDate } from "../../utils/formatTimestampToDate";
 import { useUpdateShopMutation } from "../../hooks/mutation/useUpdateShop";
 
@@ -23,11 +20,7 @@ const ShopDetailCardWrapper = styled(Grid2)(({ theme }) => ({
   padding: "16px 0px",
   borderBottom: "1.5px solid rgba(0, 0, 0, 0.2)"
 }));
-const ShopDetailCardLeftCol = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px"
-}));
+
 const LabeledFieldWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -41,11 +34,7 @@ const ShopName = styled("div")(({ theme }) => ({
   fontWeight: 500,
   color: "#000000"
 }));
-// const ShopConsumerNo = styled("div")(({ theme }) => ({
-//   fontSize: "16px",
-//   fontWeight: 500,
-//   color: "#000000"
-// }));
+
 const ShopOwnerName = styled("div")(({ theme }) => ({
   fontSize: "16px",
   fontWeight: 500,
@@ -71,14 +60,7 @@ const ShopStatus = styled("div")(({ theme }) => ({
   fontWeight: 500,
   color: "#000000"
 }));
-const ShopDetailCardRightCol = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: "4px",
-  [theme.breakpoints.up("md")]: {
-    gap: "8px"
-  }
-}));
+
 
 const LabeledField = (props) => {
   return (

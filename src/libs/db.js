@@ -2,16 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
 const firebaseConfig = {
-  apiKey: "AIzaSyAjZbOY7wdOc58l7Mdeyil9aIhanmm8vVo",
-  authDomain: "shop-rent-36261.firebaseapp.com",
-  projectId: "shop-rent-36261",
-  storageBucket: "shop-rent-36261.firebasestorage.app",
-  messagingSenderId: "259093832147",
-  appId: "1:259093832147:web:662d368d3fbf14a7d18f26",
-  measurementId: "G-MMQNV35FCY"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain:process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId:process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId:process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId:process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);

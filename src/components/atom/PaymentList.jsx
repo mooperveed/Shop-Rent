@@ -7,34 +7,12 @@ import { NewPaymentModal } from "./NewPaymentModal";
 import CircularLoader from "./CircularLoader";
 import { useShopDetailsQuery } from "../../hooks/query/useShopDetails";
 
-// const PaymentListWrapper = styled("div")(({ theme }) => ({
-//   display: "flex",
-//   flexDirection: "column",
-//   gap: "12px"
-// }));
-// const PaymentListContainer = styled("div")(({ theme }) => ({
-//   display: "flex",
-//   flexDirection: "column",
-//   gap: "12px"
-// }));
-// const PaymentListHeader = styled("div")(({ theme }) => ({
-//   display: "flex",
-//   justifyContent: "space-between",
-//   alignItems: "center"
-// }));
-// const PaymentListHeaderLabel = styled("div")(({ theme }) => ({
-//   fontSize: "24px",
-//   fontWeight: 500,
-//   color: "#000000"
-// }));
+
 export const PaymentList = () => {
   const { shopId } = useParams();
   const [open, setOpen] = useState(false);
-  // const [payments, setPayments] = useState([]);
-// console.log(shopId);
   const paymentsListQuery = useShopPaymentsQuery(shopId);
   const shopDetailsQuery = useShopDetailsQuery(shopId);
-  // const whatsappNumber=Number("9778031030");
   const payments = useMemo(() => {
     if (!paymentsListQuery.data) return [];
      
